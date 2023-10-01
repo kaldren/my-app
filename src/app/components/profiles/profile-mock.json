@@ -1,0 +1,39 @@
+{
+    "id": 12345,
+    "name": "Ivan Petrov",
+    "email": "ivan.petrov@example.com",
+    "phone": "+359 88 123 4567",
+    "profession": "Software Developer",
+    "yearsOfExperience": 5,
+    "education": {
+      "degree": "Master's",
+      "major": "Computer Science",
+      "school": "Sofia University"
+    },
+    "technologies": [
+      "JavaScript",
+      "React",
+      "Node.js"
+    ],
+    "languages": [
+      {
+        "language": "English",
+        "level": "B2"
+      },
+      {
+        "language": "German",
+        "level": "A1"
+      }
+    ],
+    "personalInfo": {
+      "city": "Sofia",
+      "address": "12 Izgrev St.",
+      "dateOfBirth": "1990-01-15"
+    },
+    "preferredConditions": {
+      "jobType": "Full-time",
+      "minimumSalary": 3500,
+      "remoteWork": true
+    }
+  }
+  
