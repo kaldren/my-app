@@ -81,8 +81,42 @@ export default function Page({ params }: { params: { id: string } }) {
         </button>
 
       </main>
-      <aside className='w-1/3 border border-gray-300 rounded p-2 m-2'>
-        <h2>TECHNICAL PROJECT LEADER FOR AUTOMOTIVE, Роберт Бош ЕООД</h2>
+      <aside className='w-1/3 border border-gray-300 rounded m-2 p-10'>
+      <img
+          src='/meta.webp'
+          alt='Meta'
+          className='max-w-xs block m-auto'
+        />
+        <h2 className='text-center font-bold text-2xl mb-4'>Meta</h2>
+        <p>
+        <span className='font-bold'>Meta</span>, formerly known as Facebook, is a technology company that focuses on building a comprehensive metaverse, connecting people through a variety of platforms and augmented/virtual reality experiences.
+        </p>
+        <div className='flex flex-col mt-4'>
+        <div className='flex mb-2'>
+            <span className='material-icons mr-2'>home</span>
+              <p>
+                https://meta.com
+              </p>
+          </div>
+          <div className='flex mb-2'>
+            <span className='material-icons mr-2'>domain</span>
+              <p>
+                Technology
+              </p>
+          </div>
+          <div className='flex mb-2'>
+            <span className='material-icons mr-2'>flag</span>
+              <p>
+                Founded in 2004
+              </p>
+          </div>
+          <div className='flex mb-2'>
+            <span className='material-icons mr-2'>groups</span>
+              <p>
+                76,000 employees
+              </p>
+          </div>
+        </div>
       </aside>
     </div>
   );
