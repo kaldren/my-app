@@ -1,3 +1,6 @@
+import Button from '@/app/components/Button';
+import H2 from '@/app/components/H2';
+
 export default function Page({ params }: { params: { id: string } }) {
   return (
     <div className='flex'>
@@ -6,9 +9,8 @@ export default function Page({ params }: { params: { id: string } }) {
           src='https://assets.website-files.com/60c77302fcfa2bdb6e595f76/60c8f5679f25ae8635e4f505_image-8-cover-company-job-board-x-template.jpg'
           alt='company name'
         />
-        <h2 className='text-2xl font-bold text-center my-10'>
-          Backend Software Engineer
-        </h2>
+
+        <H2 text='Backend Software Engineer' />
 
         <div className='flex flex-wrap justify-between my-10 mx-10'>
           <div className='flex flex-col text-center'>
@@ -76,9 +78,7 @@ export default function Page({ params }: { params: { id: string } }) {
           </p>
         </div>
 
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded block mx-auto my-4">
-          APPLY
-        </button>
+        <Button text="Кандидатствай" />
 
       </main>
       <aside className='w-1/3 border border-gray-300 rounded m-2 p-10'>
