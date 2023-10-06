@@ -39,7 +39,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Location</p>
             </div>
 
-            <p className='font-bold'>Remote</p>
+            <p className='font-bold'>{job.LocationName}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -48,7 +48,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Level</p>
             </div>
 
-            <p className='font-bold'>Senior</p>
+            <p className='font-bold'>{job.SeniorityName}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -57,7 +57,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Department</p>
             </div>
 
-            <p className='font-bold'>Development</p>
+            <p className='font-bold'>{job.DepartmentName}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -66,7 +66,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Type</p>
             </div>
 
-            <p className='font-bold'>Full-time</p>
+            <p className='font-bold'>{job.EmploymentTypeName}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -75,26 +75,13 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Salary</p>
             </div>
 
-            <p className='font-bold'>$100,000</p>
+            <p className='font-bold'>{job.Salary}</p>
           </div>
         </div>
 
         <div className='p-10'>
           <p>
-            TECHNICAL PROJECT LEADER FOR AUTOMOTIVE Company Description Welcome to
-            a place where your ideas lead to something big. Welcome to Bosch.
-            Bosch is a leading global supplier of technology and services for the
-            automotive industry. Bosch Engineering Center Sofia was founded in
-            2019 as an integral part of Bosch worldwide engineering network. Today
-            our team of over 600 talented software and hardware professionals work
-            on the latest automotive technologies which shape the future of
-            mobility. Some of our focus areas include Automated Driving Systems,
-            Artificial Intelligence for accident prevention, Driver Assistance,
-            Autonomous Parking, Electric Mobility and eBike Systems. Our mission
-            is to contribute to safer mobility through software technologies with
-            care for the environment and society. Join our team and help us
-            transform the automotive industry! We are looking for the right person
-            for the following vacancy: Technical Project Leader
+            {job.Description}
           </p>
         </div>
 
@@ -107,7 +94,7 @@ export default function Page({ params }: { params: { id: string } }) {
           alt='Meta'
           className='max-w-xs block m-auto'
         />
-        <h2 className='text-center font-bold text-2xl mb-4'>Meta</h2>
+        <h2 className='text-center font-bold text-2xl mb-4'>{job.CompanyName}</h2>
         <p>
         <span className='font-bold'>Meta</span>, formerly known as Facebook, is a technology company that focuses on building a comprehensive metaverse, connecting people through a variety of platforms and augmented/virtual reality experiences.
         </p>
