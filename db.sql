@@ -63,7 +63,7 @@ CREATE TABLE Companies (
 	NAME NVARCHAR(50) NOT NULL,
     YearFounded INT NOT NULL,
 	Employees INT NOT NULL,
-	Address NVARCHAR(50) NOT NULL,
+	Address NVARCHAR(100) NOT NULL,
 	Website NVARCHAR(50) NOT NULL,
 	Facebook NVARCHAR(50) NOT NULL,
 	LinkedIn NVARCHAR(50) NOT NULL,
@@ -78,9 +78,11 @@ CREATE TABLE Jobs (
     DepartmentId INT FOREIGN KEY REFERENCES Departments(DepartmentId),
     EmploymentId INT FOREIGN KEY REFERENCES EmploymentTypes(EmploymentId),
     LocationId INT FOREIGN KEY REFERENCES Locations(LocationId),
-    Salary NVARCHAR(100),
-    Description NVARCHAR(MAX)
+    Salary NVARCHAR(20),
+    Description NVARCHAR(1000),
+    SeniorityId INT FOREIGN KEY REFERENCES Seniority(SeniorityID)
 );
+
 
 CREATE TABLE Languages (
     LanguageId INT PRIMARY KEY IDENTITY(1,1),
@@ -122,7 +124,37 @@ CREATE TABLE EmploymentTypeTranslations (
     TranslatedName NVARCHAR(100) NOT NULL
 );
 
+GO
 
+CREATE TABLE Seniority (
+    SeniorityID INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100)
+);
+
+GO
+
+INSERT INTO Seniority (Name)
+VALUES 
+('Intern'),
+('Entry-level'),
+('Junior'),
+('Mid-level'),
+('Senior'),
+('Lead'),
+('Manager'),
+('Director'),
+('Vice President'),
+('CEO'),
+('CFO'),
+('COO'),
+('CTO'),
+('CMO'),
+('CIO'),
+('CHRO'),
+('CCO'),
+('CDO');
+
+GO
 
 -- INSERT DATA
 INSERT INTO Countries (Name) VALUES
@@ -323,3 +355,104 @@ INSERT INTO Countries (Name) VALUES
 ('Yemen'),
 ('Zambia'),
 ('Zimbabwe');
+
+GO
+
+INSERT INTO [dbo].[Companies] 
+    ([NAME], [YearFounded], [Employees], [Address], [Website], [Facebook], [LinkedIn], [ShortDescription]) 
+VALUES 
+    ('Apple Inc.', 1976, 147000, '1 Apple Park Way, Cupertino, CA 95014, USA', 'https://www.apple.com', 'https://www.facebook.com/apple', 'https://www.linkedin.com/company/apple', 'Apple designs, manufactures, and markets a broad range of consumer technology products, including smartphones, personal computers, tablets, wearables, and accessories.'),
+
+    ('Microsoft Corporation', 1975, 181000, '1 Microsoft Way, Redmond, WA 98052, USA', 'https://www.microsoft.com', 'https://www.facebook.com/Microsoft', 'https://www.linkedin.com/company/microsoft', 'Microsoft develops, licenses, and supports a wide range of software products, computing devices, and services.'),
+
+    ('Google (Alphabet Inc.)', 1998, 156500, '1600 Amphitheatre Parkway, Mountain View, CA 94043, USA', 'https://www.google.com', 'https://www.facebook.com/Google', 'https://www.linkedin.com/company/google', 'Google specializes in internet-related services and products, which include online advertising technologies, a search engine, cloud computing, software, and hardware.'),
+
+    ('Amazon.com, Inc.', 1994, 1298000, '410 Terry Ave N, Seattle, WA 98109, USA', 'https://www.amazon.com', 'https://www.facebook.com/Amazon', 'https://www.linkedin.com/company/amazon', 'Amazon is a multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence.'),
+
+    ('Facebook, Inc.', 2004, 63373, '1601 Willow Road, Menlo Park, CA 94025, USA', 'https://www.facebook.com', 'https://www.facebook.com/facebook', 'https://www.linkedin.com/company/facebook', 'Facebook is an American online social media and social networking service company.');
+
+GO
+
+INSERT INTO Departments (Name) VALUES
+('Manufacturing'),
+('Drivers'),
+('Telecommunications'),
+('IT and Software'),
+('Finance'),
+('Marketing and Advertising'),
+('Trade'),
+('Healthcare'),
+('Education'),
+('Engineering'),
+('Construction'),
+('Humanities and Arts'),
+('Tourism and Hotel Management'),
+('Agriculture and Forestry'),
+('Sports and Recreation'),
+('Research Activities'),
+('Legal Services'),
+('Human Resources'),
+('Real Estate'),
+('Administration'),
+('Security and Protection'),
+('Energy'),
+('Media and Communications'),
+('Transport and Logistics'),
+('Customer Service'),
+('Architecture and Design'),
+('Environment and Ecology'),
+('Marine and River Transport'),
+('Aviation'),
+('Insurance');
+
+GO
+
+INSERT INTO EmploymentTypes (Name) VALUES
+('Full-Time'),
+('Part-Time'),
+('Remote'),
+('Freelance/Contractual'),
+('Temporary'),
+('Internship'),
+('Shift Work'),
+('Gig Work'),
+('Commission-Based'),
+('Consultant');
+
+GO
+
+INSERT INTO Locations (Name, CountryId) VALUES
+('Sofia', 26),
+('Plovdiv', 26),
+('Varna', 26),
+('Bourgas', 26)
+
+GO
+
+INSERT INTO [my-app].[dbo].[Jobs] 
+(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description) 
+VALUES 
+(1, 'Software Developer', 1, 1, 1, '50000', 'Develop and maintain web applications.');
+
+GO
+
+INSERT INTO [my-app].[dbo].[Jobs] 
+(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description) 
+VALUES 
+(2, 'Marketing Specialist', 2, 2, 2, '45000', 'Handle the marketing campaigns and strategies.');
+
+GO
+
+INSERT INTO [my-app].[dbo].[Jobs] 
+(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description) 
+VALUES 
+(3, 'Sales Manager', 3, 3, 3, '55000', 'Oversee the sales team and drive sales targets.');
+
+GO
+
+INSERT INTO [my-app].[dbo].[Jobs] 
+(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description) 
+VALUES 
+(4, 'HR Specialist', 4, 4, 4, '48000', 'Handle recruitment, employee relations, and HR policies.');
+
+GO

@@ -1,5 +1,5 @@
 import { poolPromise } from '../../db';
-const sql = require('mssql');// Assuming you're using the mssql package.
+const sql = require('mssql');
 
 export async function POST(request: Request) {
   try {
@@ -7,16 +7,15 @@ export async function POST(request: Request) {
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input('Name', sql.NVarChar, req.Name)
-      .input('YearFounded', sql.Int, req.YearFounded)
-      .input('Employees', sql.Int, req.Employees)
-      .input('Address', sql.NVarChar, req.Address)
-      .input('Website', sql.NVarChar, req.Website)
-      .input('Facebook', sql.NVarChar, req.Facebook)
-      .input('LinkedIn', sql.NVarChar, req.LinkedIn)
-      .input('ShortDescription', sql.NVarChar, req.ShortDescription)
+      .input('CompanyId', sql.Int, 1)
+      .input('DepartmentId', sql.Int, 1)
+      .input('Position', sql.NVarChar, "software developer")
+      .input('EmploymentId', sql.Int, 1)
+      .input('LocationId', sql.Int, 1)
+      .input('Salary', sql.NVarChar, "6000-9000")
+      .input('Description', sql.NVarChar, "Write some .NET code!")
       .query(
-        'INSERT INTO Company (Name, YearFounded, Employees, Address, Website, Facebook, LinkedIn, ShortDescription) VALUES (@Name, @YearFounded, @Employees, @Address, @Website, @Facebook, @LinkedIn, @ShortDescription)'
+        'INSERT INTO Jobs (CompanyId, DepartmentId, Position, EmploymentId, LocationId, Salary, Description) VALUES (@CompanyId, @DepartmentId, @Position, @EmploymentId, @LocationId, @Salary, @Description)'
       );
       return Response.json({ result })
   } catch (err: any) {
