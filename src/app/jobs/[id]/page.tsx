@@ -1,7 +1,27 @@
+'use client'
+import { useState, useEffect } from 'react';
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
 
 export default function Page({ params }: { params: { id: string } }) {
+  const [job, setJob] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(`/api/jobs/${params.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setJob(data);
+      } else {
+        console.error('Failed to fetch job details.');
+      }
+    }
+
+    fetchData();
+  }, [params.id]);
+
+  if (!job) return <div>Loading...</div>;
+
   return (
     <div className='flex'>
       <main className='w-2/3 border border-gray-300 rounded p-2 m-2'>
