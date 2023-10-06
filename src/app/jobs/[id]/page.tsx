@@ -30,7 +30,7 @@ export default function Page({ params }: { params: { id: string } }) {
           alt='company name'
         />
 
-        <H2 text='Backend Software Engineer' />
+        <H2 text={job.Position} />
 
         <div className='flex flex-wrap justify-between my-10 mx-10'>
           <div className='flex flex-col text-center'>
