@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const result = await pool
       .request()
       .input('JobId', sql.Int, jobId)
-      .query('SELECT * FROM Jobs');
+      .query('SELECT * FROM Jobs WHERE JobId = @JobId');
 
     if (result.recordset.length === 0) {
       return new Response(`No job found with ID: ${jobId}`, {
