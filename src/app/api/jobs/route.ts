@@ -1,4 +1,4 @@
-import { poolPromise } from '../../db';
+import { poolPromise } from './../../db';
 const sql = require('mssql');
 
 export async function POST(request: Request) {
