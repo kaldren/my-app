@@ -1,23 +1,25 @@
-'use client'
+'use client';
 import { useState, useEffect } from 'react';
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
+import { Company, Job } from '@/types';
+import Link from 'next/link';
 
 export default function Page({ params }: { params: { id: string } }) {
-  const [job, setJob] = useState(null);
+  const [job, setJob] = useState<Job | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchJob() {
       const response = await fetch(`/api/jobs/${params.id}`);
       if (response.ok) {
-        const data = await response.json();
+        const data: Job = await response.json();
         setJob(data);
       } else {
         console.error('Failed to fetch job details.');
       }
     }
-
-    fetchData();
+    fetchJob();
   }, [params.id]);
 
   if (!job) return <div>Loading...</div>;
@@ -39,7 +41,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Location</p>
             </div>
 
-            <p className='font-bold'>{job.LocationName}</p>
+            <p className='font-bold'>{job.Location}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -48,7 +50,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Level</p>
             </div>
 
-            <p className='font-bold'>{job.SeniorityName}</p>
+            <p className='font-bold'>{job.Seniority}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -57,7 +59,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Department</p>
             </div>
 
-            <p className='font-bold'>{job.DepartmentName}</p>
+            <p className='font-bold'>{job.Department}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -66,7 +68,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Type</p>
             </div>
 
-            <p className='font-bold'>{job.EmploymentTypeName}</p>
+            <p className='font-bold'>{job.EmploymentType}</p>
           </div>
 
           <div className='flex flex-col text-center'>
@@ -75,53 +77,42 @@ export default function Page({ params }: { params: { id: string } }) {
               <p className='text-gray-700'>Salary</p>
             </div>
 
-            <p className='font-bold'>{job.Salary}</p>
+            <p className='font-bold'>{job.Salary} BGN</p>
           </div>
         </div>
 
         <div className='p-10'>
-          <p>
-            {job.Description}
-          </p>
+          <p>{job.Description}</p>
         </div>
 
-        <Button text="Кандидатствай" />
-
+        <Button text='Кандидатствай' />
       </main>
       <aside className='w-1/3 border border-gray-300 rounded m-2 p-10'>
-      <img
-          src='/meta.webp'
-          alt='Meta'
-          className='max-w-xs block m-auto'
-        />
-        <h2 className='text-center font-bold text-2xl mb-4'>{job.CompanyName}</h2>
-        <p>
-        <span className='font-bold'>Meta</span>, formerly known as Facebook, is a technology company that focuses on building a comprehensive metaverse, connecting people through a variety of platforms and augmented/virtual reality experiences.
-        </p>
+        <img src='/meta.webp' alt='Meta' className='max-w-xs block m-auto' />
+
+        <h2 className='text-center font-bold text-2xl mb-4'>
+          <Link href={`/companies/${job.CompanyId}`}>
+            {job.CompanyName}
+          </Link>
+        </h2>
+
+        <p>{job.CompanyShortDescription}</p>
         <div className='flex flex-col mt-4'>
-        <div className='flex mb-2'>
+          <div className='flex mb-2'>
             <span className='material-icons mr-2'>home</span>
-              <p>
-                https://meta.com
-              </p>
+            <p>{job.CompanyWebsite}</p>
           </div>
           <div className='flex mb-2'>
             <span className='material-icons mr-2'>domain</span>
-              <p>
-                Technology
-              </p>
+            <p>Technology</p>
           </div>
           <div className='flex mb-2'>
             <span className='material-icons mr-2'>flag</span>
-              <p>
-                Founded in 2004
-              </p>
+            <p>Founded in {job.CompanyYearFounded}</p>
           </div>
           <div className='flex mb-2'>
             <span className='material-icons mr-2'>groups</span>
-              <p>
-                76,000 employees
-              </p>
+            <p>{job.CompanyEmployees} employees</p>
           </div>
         </div>
       </aside>
