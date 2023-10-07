@@ -605,3 +605,20 @@ VALUES
 ('Yambol', 26);
 
 GO
+
+-- Create a server-level login
+IF NOT EXISTS (SELECT 1 FROM sys.server_principals WHERE name = 'MyAppLogin')
+    CREATE LOGIN MyAppLogin WITH PASSWORD = 'Parola123';
+ELSE
+    ALTER LOGIN MyAppLogin WITH PASSWORD = 'Parola123';
+
+-- Switch to your specific database
+USE [my-app];
+
+-- Create a database user associated with the login
+CREATE USER MyAppUser FOR LOGIN MyAppLogin;
+
+-- Grant full access to the database (optional, be careful with this)
+EXEC sp_addrolemember 'db_owner', 'MyAppUser';
+
+GO
