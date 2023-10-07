@@ -40,7 +40,7 @@ CREATE TABLE Departments (
 GO
 
 CREATE TABLE EmploymentTypes (
-    EmploymentId INT PRIMARY KEY IDENTITY(1,1),
+    EmploymentTypeId INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL
 );
 GO
@@ -71,12 +71,19 @@ CREATE TABLE Companies (
 );
 GO
 
+CREATE TABLE Seniority (
+    SeniorityID INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100)
+);
+
+GO
+
 CREATE TABLE Jobs (
     JobId INT PRIMARY KEY IDENTITY(1,1),
     CompanyId INT FOREIGN KEY REFERENCES Companies(CompanyId),
     Position NVARCHAR(100) NOT NULL,
     DepartmentId INT FOREIGN KEY REFERENCES Departments(DepartmentId),
-    EmploymentId INT FOREIGN KEY REFERENCES EmploymentTypes(EmploymentId),
+    EmploymentTypeId INT FOREIGN KEY REFERENCES EmploymentTypes(EmploymentTypeId),
     LocationId INT FOREIGN KEY REFERENCES Locations(LocationId),
     Salary NVARCHAR(20),
     Description NVARCHAR(1000),
@@ -128,16 +135,9 @@ GO
 
 CREATE TABLE EmploymentTypeTranslations (
     EmploymentTypeTranslationId INT PRIMARY KEY IDENTITY(1,1),
-    EmploymentId INT NOT NULL FOREIGN KEY REFERENCES EmploymentTypes(EmploymentId),
+    EmploymentTypeId INT NOT NULL FOREIGN KEY REFERENCES EmploymentTypes(EmploymentTypeId),
     LanguageId INT NOT NULL FOREIGN KEY REFERENCES Languages(LanguageId),
     TranslatedName NVARCHAR(100) NOT NULL
-);
-
-GO
-
-CREATE TABLE Seniority (
-    SeniorityID INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100)
 );
 
 GO
@@ -441,44 +441,37 @@ GO
 SET IDENTITY_INSERT Companies ON;
 
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (1, 'Software Developer', 1, 1, 1, '50000', 'Develop and maintain web applications.', 2);
 
 GO
 
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (2, 'Marketing Specialist', 2, 2, 2, '45000', 'Handle the marketing campaigns and strategies.', 1);
 
 GO
 
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (3, 'Sales Manager', 3, 3, 3, '55000', 'Oversee the sales team and drive sales targets.', 3);
 
 GO
 
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (4, 'HR Specialist', 4, 4, 4, '48000', 'Handle recruitment, employee relations, and HR policies.', 1);
 
 GO
 
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (5, '.NET Developer', 2, 2, 2, '45000', 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
-
-GO
-
-INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
-VALUES 
-(6, '.NET Developer', 1, 1, 1, '65000', 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
 
 GO
 
@@ -495,40 +488,41 @@ VALUES
 
 GO
 
+DECLARE @BGLangId AS NVARCHAR(2)
 SELECT @BGLangId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
 
 INSERT INTO [dbo].[DepartmentTranslations] (DepartmentId, LanguageId, TranslatedName)
 VALUES
-(1, @BGLangId, 'Производство'),
-(2, @BGLangId, 'Шофьори'),
-(3, @BGLangId, 'Телекомуникации'),
-(4, @BGLangId, 'IT и Софтуер'),
-(5, @BGLangId, 'Финанси'),
-(6, @BGLangId, 'Маркетинг и Реклама'),
-(7, @BGLangId, 'Търговия'),
-(8, @BGLangId, 'Здравеопазване'),
-(9, @BGLangId, 'Образование'),
-(10, @BGLangId, 'Инженерство'),
-(11, @BGLangId, 'Строителство'),
-(12, @BGLangId, 'Хуманитарни науки и Изкуства'),
-(13, @BGLangId, 'Туризъм и Хотелско управление'),
-(14, @BGLangId, 'Земеделие и Горско стопанство'),
-(15, @BGLangId, 'Спорт и Развлечения'),
-(16, @BGLangId, 'Научни изследвания'),
-(17, @BGLangId, 'Правни услуги'),
-(18, @BGLangId, 'Човешки ресурси'),
-(19, @BGLangId, 'Недвижими имоти'),
-(20, @BGLangId, 'Администрация'),
-(21, @BGLangId, 'Сигурност и Защита'),
-(22, @BGLangId, 'Енергетика'),
-(23, @BGLangId, 'Медии и Комуникации'),
-(24, @BGLangId, 'Транспорт и Логистика'),
-(25, @BGLangId, 'Обслужване на клиенти'),
-(26, @BGLangId, 'Архитектура и Дизайн'),
-(27, @BGLangId, 'Околна среда и Екология'),
-(28, @BGLangId, 'Морски и Речен транспорт'),
-(29, @BGLangId, 'Авиация'),
-(30, @BGLangId, 'Застраховане');
+(1, @BGLangId, N'Производство'),
+(2, @BGLangId, N'Шофьори'),
+(3, @BGLangId, N'Телекомуникации'),
+(4, @BGLangId, N'IT и Софтуер'),
+(5, @BGLangId, N'Финанси'),
+(6, @BGLangId, N'Маркетинг и Реклама'),
+(7, @BGLangId, N'Търговия'),
+(8, @BGLangId, N'Здравеопазване'),
+(9, @BGLangId, N'Образование'),
+(10, @BGLangId, N'Инженерство'),
+(11, @BGLangId, N'Строителство'),
+(12, @BGLangId, N'Хуманитарни науки и Изкуства'),
+(13, @BGLangId, N'Туризъм и Хотелско управление'),
+(14, @BGLangId, N'Земеделие и Горско стопанство'),
+(15, @BGLangId, N'Спорт и Развлечения'),
+(16, @BGLangId, N'Научни изследвания'),
+(17, @BGLangId, N'Правни услуги'),
+(18, @BGLangId, N'Човешки ресурси'),
+(19, @BGLangId, N'Недвижими имоти'),
+(20, @BGLangId, N'Администрация'),
+(21, @BGLangId, N'Сигурност и Защита'),
+(22, @BGLangId, N'Енергетика'),
+(23, @BGLangId, N'Медии и Комуникации'),
+(24, @BGLangId, N'Транспорт и Логистика'),
+(25, @BGLangId, N'Обслужване на клиенти'),
+(26, @BGLangId, N'Архитектура и Дизайн'),
+(27, @BGLangId, N'Околна среда и Екология'),
+(28, @BGLangId, N'Морски и Речен транспорт'),
+(29, @BGLangId, N'Авиация'),
+(30, @BGLangId, N'Застраховане');
 
 GO
 
@@ -537,18 +531,18 @@ DECLARE @BGLanguageId NVARCHAR(2)
 SELECT @BGLanguageId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
 
 -- Insert translated employment types into the EmploymentTypeTranslations table
-INSERT INTO [dbo].[EmploymentTypeTranslations] (EmploymentId, LanguageId, TranslatedName)
+INSERT INTO [dbo].[EmploymentTypeTranslations] (EmploymentTypeId, LanguageId, TranslatedName)
 VALUES 
-(1, @BGLanguageId, 'Пълен работен ден'), -- Full-Time
-(2, @BGLanguageId, 'Непълен работен ден'), -- Part-Time
-(3, @BGLanguageId, 'От разстояние'), -- Remote
-(4, @BGLanguageId, 'Свободна практика/Договор'), -- Freelance/Contractual
-(5, @BGLanguageId, 'Временна'), -- Temporary
-(6, @BGLanguageId, 'Стаж'), -- Internship
-(7, @BGLanguageId, 'Смяна'), -- Shift Work
-(8, @BGLanguageId, 'По поръчка'), -- Gig Work
-(9, @BGLanguageId, 'На комисионна основа'), -- Commission-Based
-(10, @BGLanguageId, 'Консултант') -- Consultant
+(1, @BGLanguageId, N'Пълен работен ден'), -- Full-Time
+(2, @BGLanguageId, N'Непълен работен ден'), -- Part-Time
+(3, @BGLanguageId, N'От разстояние'), -- Remote
+(4, @BGLanguageId, N'Свободна практика/Договор'), -- Freelance/Contractual
+(5, @BGLanguageId, N'Временна'), -- Temporary
+(6, @BGLanguageId, N'Стаж'), -- Internship
+(7, @BGLanguageId, N'Смяна'), -- Shift Work
+(8, @BGLanguageId, N'По поръчка'), -- Gig Work
+(9, @BGLanguageId, N'На комисионна основа'), -- Commission-Based
+(10, @BGLanguageId, N'Консултант') -- Consultant
 
 GO
 
@@ -559,24 +553,24 @@ SELECT @BGLanguageId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
 -- Insert translated seniority levels into the SeniorityTranslations table
 INSERT INTO [my-app].[dbo].[SeniorityTranslations] (SeniorityId, LanguageId, TranslatedName)
 VALUES 
-(1, @BGLanguageId, 'Стажант'),  -- Intern
-(2, @BGLanguageId, 'На начално ниво'),  -- Entry-level
-(3, @BGLanguageId, 'Младши'),  -- Junior
-(4, @BGLanguageId, 'Средно ниво'),  -- Mid-level
-(5, @BGLanguageId, 'Старши'),  -- Senior
-(6, @BGLanguageId, 'Водач'),  -- Lead
-(7, @BGLanguageId, 'Мениджър'),  -- Manager
-(8, @BGLanguageId, 'Директор'),  -- Director
-(9, @BGLanguageId, 'Вицепрезидент'),  -- Vice President
-(10, @BGLanguageId, 'Изпълнителен директор'),  -- CEO
-(11, @BGLanguageId, 'Финансов директор'),  -- CFO
-(12, @BGLanguageId, 'Директор по операции'),  -- COO
-(13, @BGLanguageId, 'Технически директор'),  -- CTO
-(14, @BGLanguageId, 'Маркетингов директор'),  -- CMO
-(15, @BGLanguageId, 'Директор по информационни технологии'),  -- CIO
-(16, @BGLanguageId, 'Директор по човешки ресурси'),  -- CHRO
-(17, @BGLanguageId, 'Комерсиален директор'),  -- CCO
-(18, @BGLanguageId, 'Директор по цифрови технологии')  -- CDO
+(1, @BGLanguageId, N'Стажант'),  -- Intern
+(2, @BGLanguageId, N'На начално ниво'),  -- Entry-level
+(3, @BGLanguageId, N'Младши'),  -- Junior
+(4, @BGLanguageId, N'Средно ниво'),  -- Mid-level
+(5, @BGLanguageId, N'Старши'),  -- Senior
+(6, @BGLanguageId, N'Водач'),  -- Lead
+(7, @BGLanguageId, N'Мениджър'),  -- Manager
+(8, @BGLanguageId, N'Директор'),  -- Director
+(9, @BGLanguageId, N'Вицепрезидент'),  -- Vice President
+(10, @BGLanguageId, N'Изпълнителен директор'),  -- CEO
+(11, @BGLanguageId, N'Финансов директор'),  -- CFO
+(12, @BGLanguageId, N'Директор по операции'),  -- COO
+(13, @BGLanguageId, N'Технически директор'),  -- CTO
+(14, @BGLanguageId, N'Маркетингов директор'),  -- CMO
+(15, @BGLanguageId, N'Директор по информационни технологии'),  -- CIO
+(16, @BGLanguageId, N'Директор по човешки ресурси'),  -- CHRO
+(17, @BGLanguageId, N'Комерсиален директор'),  -- CCO
+(18, @BGLanguageId, N'Директор по цифрови технологии')  -- CDO
 
 GO
 
