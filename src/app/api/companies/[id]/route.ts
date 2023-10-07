@@ -3,51 +3,34 @@ const sql = require('mssql');
 
 export async function GET(request: Request) {
   try {
-    const jobId = request.url.split('/').pop();
+    const companyId = request.url.split('/').pop();
 
-    if (!jobId) {
-      return new Response(`JobId not provided`, {
+    if (!companyId) {
+      return new Response(`CompanyId not provided`, {
         status: 400,
       });
     }
 
     const pool = await poolPromise;
-    const result = await pool.request().input('JobId', sql.Int, jobId).query(`
+    const result = await pool.request().input('CompanyId', sql.Int, companyId).query(`
     SELECT 
-        J.[Position],
-        D.[Name] AS Department,
-        E.[Name] AS EmploymentType,
-        L.[Name] AS Location,
-        J.[Salary],
-        J.[Description],
-        S.[Name] AS Seniority,
         C.[CompanyId] AS CompanyId,
-        C.[Name] AS CompanyName,
-        C.[YearFounded] AS CompanyYearFounded,
-        C.[Employees] AS CompanyEmployees,
-        C.[Address] AS CompanyAddress,
-        C.[Website] AS CompanyWebsite,
-        C.[Facebook] AS CompanyFacebook,
-        C.[LinkedIn] AS CompanyLinkedIn,
-        C.[ShortDescription] AS CompanyShortDescription
+        C.[Name] AS Name,
+        C.[YearFounded] AS YearFounded,
+        C.[Employees] AS Employees,
+        C.[Address] AS Address,
+        C.[Website] AS Website,
+        C.[Facebook] AS Facebook,
+        C.[LinkedIn] AS LinkedIn,
+        C.[ShortDescription] AS ShortDescription
     FROM 
-        [my-app].[dbo].[Jobs] J
-    JOIN 
-        [my-app].[dbo].[Companies] C ON J.[CompanyId] = C.[CompanyId]
-    JOIN 
-        [my-app].[dbo].[Departments] D ON J.[DepartmentId] = D.[DepartmentId]
-    JOIN 
-        [my-app].[dbo].[EmploymentTypes] E ON J.[EmploymentId] = E.[EmploymentId]
-    JOIN 
-        [my-app].[dbo].[Locations] L ON J.[LocationId] = L.[LocationId]
-    JOIN 
-        [my-app].[dbo].[Seniority] S ON J.[SeniorityId] = S.[SeniorityId]
+        [dbo].[Companies] C
     WHERE 
-        J.[JobId] = @JobId
+        C.[CompanyId] = @CompanyId
     `);
 
     if (result.recordset.length === 0) {
-      return new Response(`No job found with ID: ${jobId}`, {
+      return new Response(`No company found with ID: ${companyId}`, {
         status: 404,
       });
     }

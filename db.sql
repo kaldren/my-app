@@ -431,42 +431,42 @@ GO
 
 SET IDENTITY_INSERT Companies ON;
 
-INSERT INTO [my-app].[dbo].[Jobs] 
+INSERT INTO [dbo].[Jobs] 
 (CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (1, 'Software Developer', 1, 1, 1, '50000', 'Develop and maintain web applications.', 2);
 
 GO
 
-INSERT INTO [my-app].[dbo].[Jobs] 
+INSERT INTO [dbo].[Jobs] 
 (CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (2, 'Marketing Specialist', 2, 2, 2, '45000', 'Handle the marketing campaigns and strategies.', 1);
 
 GO
 
-INSERT INTO [my-app].[dbo].[Jobs] 
+INSERT INTO [dbo].[Jobs] 
 (CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (3, 'Sales Manager', 3, 3, 3, '55000', 'Oversee the sales team and drive sales targets.', 3);
 
 GO
 
-INSERT INTO [my-app].[dbo].[Jobs] 
+INSERT INTO [dbo].[Jobs] 
 (CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (4, 'HR Specialist', 4, 4, 4, '48000', 'Handle recruitment, employee relations, and HR policies.', 1);
 
 GO
 
-INSERT INTO [my-app].[dbo].[Jobs] 
+INSERT INTO [dbo].[Jobs] 
 (CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (5, '.NET Developer', 2, 2, 2, '45000', 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
 
 GO
 
-INSERT INTO [my-app].[dbo].[Jobs] 
+INSERT INTO [dbo].[Jobs] 
 (CompanyId, Position, DepartmentId, EmploymentId, LocationId, Salary, Description, SeniorityId) 
 VALUES 
 (6, '.NET Developer', 1, 1, 1, '65000', 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);

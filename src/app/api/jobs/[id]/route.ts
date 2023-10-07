@@ -31,17 +31,17 @@ export async function GET(request: Request) {
         C.[LinkedIn] AS CompanyLinkedIn,
         C.[ShortDescription] AS CompanyShortDescription
     FROM 
-        [my-app].[dbo].[Jobs] J
+        [dbo].[Jobs] J
     JOIN 
-        [my-app].[dbo].[Companies] C ON J.[CompanyId] = C.[CompanyId]
+        [dbo].[Companies] C ON J.[CompanyId] = C.[CompanyId]
     JOIN 
-        [my-app].[dbo].[Departments] D ON J.[DepartmentId] = D.[DepartmentId]
+        [dbo].[Departments] D ON J.[DepartmentId] = D.[DepartmentId]
     JOIN 
-        [my-app].[dbo].[EmploymentTypes] E ON J.[EmploymentId] = E.[EmploymentId]
+        [dbo].[EmploymentTypes] E ON J.[EmploymentId] = E.[EmploymentId]
     JOIN 
-        [my-app].[dbo].[Locations] L ON J.[LocationId] = L.[LocationId]
+        [dbo].[Locations] L ON J.[LocationId] = L.[LocationId]
     JOIN 
-        [my-app].[dbo].[Seniority] S ON J.[SeniorityId] = S.[SeniorityId]
+        [dbo].[Seniority] S ON J.[SeniorityId] = S.[SeniorityId]
     WHERE 
         J.[JobId] = @JobId
     `);
