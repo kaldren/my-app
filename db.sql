@@ -579,3 +579,35 @@ VALUES
 (18, @BGLanguageId, 'Директор по цифрови технологии')  -- CDO
 
 GO
+
+INSERT INTO [my-app].[dbo].[Locations] (Name, CountryId)
+VALUES 
+('Blagoevgrad', 26),
+('Burgas', 26),
+('Varna', 26),
+('Veliko Tarnovo', 26),
+('Vidin', 26),
+('Vratsa', 26),
+('Gabrovo', 26),
+('Dobrich', 26),
+('Kardzhali', 26),
+('Kyustendil', 26),
+('Lovech', 26),
+('Montana', 26),
+('Pazardzhik', 26),
+('Pernik', 26),
+('Pleven', 26),
+('Plovdiv', 26),
+('Razgrad', 26),
+('Ruse', 26),
+('Silistra', 26),
+('Sliven', 26),
+('Smolyan', 26),
+('Sofia', 26),
+('Stara Zagora', 26),
+('Targovishte', 26),
+('Haskovo', 26),
+('Shumen', 26),
+('Yambol', 26);
+
+GO
