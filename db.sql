@@ -95,11 +95,20 @@ GO
 CREATE TABLE DepartmentTranslations (
     DepartmentTranslationId INT PRIMARY KEY IDENTITY(1,1),
     DepartmentId INT NOT NULL FOREIGN KEY REFERENCES Departments(DepartmentId),
-    LanguageCode NVARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Languages(LanguageCode),
+    LanguageId INT NOT NULL FOREIGN KEY REFERENCES Languages(LanguageId),
     TranslatedName NVARCHAR(100) NOT NULL
 );
 
+GO
 
+CREATE TABLE SeniorityTranslations (
+    SeniorityTranslationId INT PRIMARY KEY IDENTITY(1,1),
+    SeniorityId INT NOT NULL FOREIGN KEY REFERENCES Seniority(SeniorityId),
+    LanguageId INT NOT NULL FOREIGN KEY REFERENCES Languages(LanguageId),
+    TranslatedName NVARCHAR(100) NOT NULL
+);
+
+GO
 
 CREATE TABLE LocationTranslations (
     LocationTranslationId INT PRIMARY KEY IDENTITY(1,1),
@@ -120,7 +129,7 @@ GO
 CREATE TABLE EmploymentTypeTranslations (
     EmploymentTypeTranslationId INT PRIMARY KEY IDENTITY(1,1),
     EmploymentId INT NOT NULL FOREIGN KEY REFERENCES EmploymentTypes(EmploymentId),
-    LanguageCode NVARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Languages(LanguageCode),
+    LanguageId INT NOT NULL FOREIGN KEY REFERENCES Languages(LanguageId),
     TranslatedName NVARCHAR(100) NOT NULL
 );
 
@@ -474,3 +483,99 @@ VALUES
 GO
 
 SET IDENTITY_INSERT Companies OFF;
+
+GO
+
+
+INSERT 
+    INTO dbo.[Languages] (LanguageCode, LanguageName)
+VALUES 
+    ('EN', 'English'),
+    ('BG', 'Bulgarian')
+
+GO
+
+SELECT @BGLangId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
+
+INSERT INTO [dbo].[DepartmentTranslations] (DepartmentId, LanguageId, TranslatedName)
+VALUES
+(1, @BGLangId, 'Производство'),
+(2, @BGLangId, 'Шофьори'),
+(3, @BGLangId, 'Телекомуникации'),
+(4, @BGLangId, 'IT и Софтуер'),
+(5, @BGLangId, 'Финанси'),
+(6, @BGLangId, 'Маркетинг и Реклама'),
+(7, @BGLangId, 'Търговия'),
+(8, @BGLangId, 'Здравеопазване'),
+(9, @BGLangId, 'Образование'),
+(10, @BGLangId, 'Инженерство'),
+(11, @BGLangId, 'Строителство'),
+(12, @BGLangId, 'Хуманитарни науки и Изкуства'),
+(13, @BGLangId, 'Туризъм и Хотелско управление'),
+(14, @BGLangId, 'Земеделие и Горско стопанство'),
+(15, @BGLangId, 'Спорт и Развлечения'),
+(16, @BGLangId, 'Научни изследвания'),
+(17, @BGLangId, 'Правни услуги'),
+(18, @BGLangId, 'Човешки ресурси'),
+(19, @BGLangId, 'Недвижими имоти'),
+(20, @BGLangId, 'Администрация'),
+(21, @BGLangId, 'Сигурност и Защита'),
+(22, @BGLangId, 'Енергетика'),
+(23, @BGLangId, 'Медии и Комуникации'),
+(24, @BGLangId, 'Транспорт и Логистика'),
+(25, @BGLangId, 'Обслужване на клиенти'),
+(26, @BGLangId, 'Архитектура и Дизайн'),
+(27, @BGLangId, 'Околна среда и Екология'),
+(28, @BGLangId, 'Морски и Речен транспорт'),
+(29, @BGLangId, 'Авиация'),
+(30, @BGLangId, 'Застраховане');
+
+GO
+
+-- First, declare a variable to hold the LanguageId for Bulgarian
+DECLARE @BGLanguageId NVARCHAR(2)
+SELECT @BGLanguageId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
+
+-- Insert translated employment types into the EmploymentTypeTranslations table
+INSERT INTO [dbo].[EmploymentTypeTranslations] (EmploymentId, LanguageId, TranslatedName)
+VALUES 
+(1, @BGLanguageId, 'Пълен работен ден'), -- Full-Time
+(2, @BGLanguageId, 'Непълен работен ден'), -- Part-Time
+(3, @BGLanguageId, 'От разстояние'), -- Remote
+(4, @BGLanguageId, 'Свободна практика/Договор'), -- Freelance/Contractual
+(5, @BGLanguageId, 'Временна'), -- Temporary
+(6, @BGLanguageId, 'Стаж'), -- Internship
+(7, @BGLanguageId, 'Смяна'), -- Shift Work
+(8, @BGLanguageId, 'По поръчка'), -- Gig Work
+(9, @BGLanguageId, 'На комисионна основа'), -- Commission-Based
+(10, @BGLanguageId, 'Консултант') -- Consultant
+
+GO
+
+-- First, declare a variable to hold the LanguageId for Bulgarian
+DECLARE @BGLanguageId NVARCHAR(2)
+SELECT @BGLanguageId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
+
+-- Insert translated seniority levels into the SeniorityTranslations table
+INSERT INTO [my-app].[dbo].[SeniorityTranslations] (SeniorityId, LanguageId, TranslatedName)
+VALUES 
+(1, @BGLanguageId, 'Стажант'),  -- Intern
+(2, @BGLanguageId, 'На начално ниво'),  -- Entry-level
+(3, @BGLanguageId, 'Младши'),  -- Junior
+(4, @BGLanguageId, 'Средно ниво'),  -- Mid-level
+(5, @BGLanguageId, 'Старши'),  -- Senior
+(6, @BGLanguageId, 'Водач'),  -- Lead
+(7, @BGLanguageId, 'Мениджър'),  -- Manager
+(8, @BGLanguageId, 'Директор'),  -- Director
+(9, @BGLanguageId, 'Вицепрезидент'),  -- Vice President
+(10, @BGLanguageId, 'Изпълнителен директор'),  -- CEO
+(11, @BGLanguageId, 'Финансов директор'),  -- CFO
+(12, @BGLanguageId, 'Директор по операции'),  -- COO
+(13, @BGLanguageId, 'Технически директор'),  -- CTO
+(14, @BGLanguageId, 'Маркетингов директор'),  -- CMO
+(15, @BGLanguageId, 'Директор по информационни технологии'),  -- CIO
+(16, @BGLanguageId, 'Директор по човешки ресурси'),  -- CHRO
+(17, @BGLanguageId, 'Комерсиален директор'),  -- CCO
+(18, @BGLanguageId, 'Директор по цифрови технологии')  -- CDO
+
+GO
