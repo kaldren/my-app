@@ -5,9 +5,8 @@ import H2 from '@/app/components/H2';
 import { Company, Job } from '@/app/types';
 import Link from 'next/link';
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page({ params }: { params: { id: string, lang: string } }) {
   const [job, setJob] = useState<Job | null>(null);
-  const [company, setCompany] = useState<Company | null>(null);
 
   useEffect(() => {
     async function fetchJob() {

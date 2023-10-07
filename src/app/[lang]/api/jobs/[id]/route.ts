@@ -4,6 +4,8 @@ const sql = require('mssql');
 export async function GET(request: Request) {
   try {
     const jobId = request.url.split('/').pop();
+    const url = new URL(request.url);
+    const lang = url.searchParams.get('lang');
 
     if (!jobId) {
       return new Response(`JobId not provided`, {
@@ -12,10 +14,13 @@ export async function GET(request: Request) {
     }
 
     const pool = await poolPromise;
-    const result = await pool.request().input('JobId', sql.Int, jobId).query(`
+    const result = await pool
+    .request()
+    .input('JobId', sql.Int, jobId)
+    .query(`
     SELECT 
         J.[Position],
-        D.[Name] AS Department,
+        DT.[TranslatedName] AS Department,
         E.[Name] AS EmploymentType,
         L.[Name] AS Location,
         J.[Salary],
@@ -36,6 +41,8 @@ export async function GET(request: Request) {
         [dbo].[Companies] C ON J.[CompanyId] = C.[CompanyId]
     JOIN 
         [dbo].[Departments] D ON J.[DepartmentId] = D.[DepartmentId]
+    JOIN 
+        [dbo].[DepartmentTranslations] DT ON J.[DepartmentId] = DT.[DepartmentId] AND LanguageId=2 
     JOIN 
         [dbo].[EmploymentTypes] E ON J.[EmploymentId] = E.[EmploymentId]
     JOIN 
