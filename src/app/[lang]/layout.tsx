@@ -2,7 +2,7 @@ import './globals.css';
 import 'material-icons/iconfont/material-icons.css'
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Header from './components/profiles/header';
+import Header from '../components/profiles/header';
 import { NextAuthProvider } from './NextAuthProvider';
 
 const inter = Inter({ subsets: ['latin'] });

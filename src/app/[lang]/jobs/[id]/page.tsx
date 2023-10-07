@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
-import { Company, Job } from '@/types';
+import { Company, Job } from '@/app/types';
 import Link from 'next/link';
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -88,7 +88,7 @@ export default function Page({ params }: { params: { id: string } }) {
         <Button text='Кандидатствай' />
       </main>
       <aside className='w-1/3 border border-gray-300 rounded m-2 p-10'>
-        <img src='/meta.webp' alt='Meta' className='max-w-xs block m-auto' />
+        <img src='./meta.webp' alt='Meta' className='max-w-xs block m-auto' />
 
         <h2 className='text-center font-bold text-2xl mb-4'>
           <Link href={`/companies/${job.CompanyId}`}>
