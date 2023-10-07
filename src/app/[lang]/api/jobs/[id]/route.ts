@@ -4,8 +4,8 @@ const sql = require('mssql');
 export async function GET(request: Request) {
   try {
     const jobId = request.url.split('/').pop();
-    const url = new URL(request.url);
-    const lang = url.searchParams.get('lang');
+    const pathSegments = new URL(request.url).pathname.split('/');
+    const lang = pathSegments[1];
 
     if (!jobId) {
       return new Response(`JobId not provided`, {
@@ -13,15 +13,11 @@ export async function GET(request: Request) {
       });
     }
 
-    const pool = await poolPromise;
-    const result = await pool
-    .request()
-    .input('JobId', sql.Int, jobId)
-    .query(`
+    let query = `
     SELECT 
         J.[Position],
-        DT.[TranslatedName] AS Department,
-        E.[Name] AS EmploymentType,
+        ${lang !== 'en' ? 'DT.[TranslatedName]' : 'D.[Name]'} AS Department,
+        ${lang !== 'en' ? 'ET.[TranslatedName]' : 'E.[Name]'} AS EmploymentType,
         L.[Name] AS Location,
         J.[Salary],
         J.[Description],
@@ -42,16 +38,33 @@ export async function GET(request: Request) {
     JOIN 
         [dbo].[Departments] D ON J.[DepartmentId] = D.[DepartmentId]
     JOIN 
-        [dbo].[DepartmentTranslations] DT ON J.[DepartmentId] = DT.[DepartmentId] AND LanguageId=2 
-    JOIN 
-        [dbo].[EmploymentTypes] E ON J.[EmploymentId] = E.[EmploymentId]
+        [dbo].[EmploymentTypes] E ON J.[EmploymentTypeId] = E.[EmploymentTypeId]
     JOIN 
         [dbo].[Locations] L ON J.[LocationId] = L.[LocationId]
     JOIN 
         [dbo].[Seniority] S ON J.[SeniorityId] = S.[SeniorityId]
-    WHERE 
-        J.[JobId] = @JobId
-    `);
+  `;
+
+  if (lang !== 'en') {
+    query += `
+      JOIN [dbo].[DepartmentTranslations] DT ON J.[DepartmentId] = DT.[DepartmentId]
+      JOIN [dbo].[Languages] DTL ON DT.[LanguageId] = DTL.[LanguageId] AND DTL.[LanguageCode] = @lang
+
+      JOIN [dbo].[EmploymentTypeTranslations] ET ON J.[EmploymentTypeId] = ET.[EmploymentTypeId]
+      JOIN [dbo].[Languages] ETL ON DT.[LanguageId] = ETL.[LanguageId] AND ETL.[LanguageCode] = @lang
+    `;
+  }
+
+  query += `WHERE J.[JobId] = @JobId`;
+
+  console.log(query);
+
+    const pool = await poolPromise;
+    const result = await pool
+    .request()
+    .input('JobId', sql.Int, jobId)
+    .input('Lang', sql.NVarChar, lang)
+    .query(query);
 
     if (result.recordset.length === 0) {
       return new Response(`No job found with ID: ${jobId}`, {
