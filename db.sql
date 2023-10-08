@@ -80,6 +80,14 @@ CREATE TABLE Seniority (
 
 GO
 
+CREATE TABLE Currencies (
+    CurrencyId INT PRIMARY KEY IDENTITY(1,1),
+    CurrencyCode NVARCHAR(3) NOT NULL UNIQUE,
+    CurrencyName NVARCHAR(50) NOT NULL
+);
+
+GO
+
 CREATE TABLE Jobs (
     JobId INT PRIMARY KEY IDENTITY(1,1),
     CompanyId INT NOT NULL FOREIGN KEY REFERENCES Companies(CompanyId),
@@ -87,10 +95,14 @@ CREATE TABLE Jobs (
     DepartmentId INT  NOT NULL FOREIGN KEY REFERENCES Departments(DepartmentId),
     EmploymentTypeId INT  NOT NULL FOREIGN KEY REFERENCES EmploymentTypes(EmploymentTypeId),
     LocationId INT  NOT NULL FOREIGN KEY REFERENCES Locations(LocationId),
-    Salary NVARCHAR(20) NOT NULL,
+    MinSalary DECIMAL(20, 2) NULL,
+    MaxSalary DECIMAL(20, 2) NULL,
+    CurrencyId INT NULL FOREIGN KEY REFERENCES Currencies(CurrencyId),
+    IsNegotiable BIT NOT NULL DEFAULT 0,
     Description NVARCHAR(1000) NOT NULL,
     SeniorityId INT  NOT NULL FOREIGN KEY REFERENCES Seniority(SeniorityID)
 );
+
 GO
 
 CREATE TABLE Languages (
@@ -471,40 +483,53 @@ VALUES
 
 GO
 
+-- Insert statements
+INSERT INTO Currencies (CurrencyCode, CurrencyName)
+VALUES ('EUR', 'Euro');
+
+INSERT INTO Currencies (CurrencyCode, CurrencyName)
+VALUES ('USD', 'US Dollar');
+
+INSERT INTO Currencies (CurrencyCode, CurrencyName)
+VALUES ('BGN', 'Bulgarian Lev');
+
+GO
+
 SET IDENTITY_INSERT Companies ON;
 
+-- First Job (Fixed Salary of 50000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
-(1, 'Software Developer', 1, 1, 1, '50000', 'Develop and maintain web applications.', 2);
-
+(1, 'Software Developer', 1, 1, 1, 50000, 75000, 1, 0, 'Develop and maintain web applications.', 2);
 GO
 
+-- Second Job (Fixed Salary of 45000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
-(2, 'Marketing Specialist', 2, 2, 2, '45000', 'Handle the marketing campaigns and strategies.', 1);
-
+(2, 'Marketing Specialist', 2, 2, 2, 45000, 45000, 2, 0, 'Handle the marketing campaigns and strategies.', 1);
 GO
 
+-- Third Job (Fixed Salary of 55000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
-(3, 'Sales Manager', 3, 3, 3, '55000', 'Oversee the sales team and drive sales targets.', 3);
-
+(3, 'Sales Manager', 3, 3, 3, 55000, 55000, 3, 0, 'Oversee the sales team and drive sales targets.', 3);
 GO
 
+-- Fourth Job (Fixed Salary of 48000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
-(4, 'HR Specialist', 4, 4, 4, '48000', 'Handle recruitment, employee relations, and HR policies.', 1);
-
+(4, 'HR Specialist', 4, 4, 4, 48000, 48000, 1, 0, 'Handle recruitment, employee relations, and HR policies.', 1);
 GO
 
+-- Fifth Job (Fixed Salary of 45000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, Salary, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
-(5, '.NET Developer', 2, 2, 2, '45000', 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
+(5, '.NET Developer', 2, 2, 2, 45000, 45000, 1, 1, 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
 
 GO
 

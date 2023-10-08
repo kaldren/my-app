@@ -1,0 +1,9 @@
+{
+    "job": {
+        "location": "Местоположение",
+        "level": "Ниво",
+        "department": "Отдел",
+        "employmentType": "Вид заетост",
+        "salary": "Заплата"
+    }
+  }

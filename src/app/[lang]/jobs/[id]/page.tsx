@@ -2,11 +2,21 @@
 import { useState, useEffect } from 'react';
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
-import { Company, Job } from '@/app/types';
+import { Job } from '@/app/types';
 import Link from 'next/link';
+import { getLocalization } from '../../localizations';
 
 export default function Page({ params }: { params: { id: string, lang: string } }) {
+  const [local, setLocal] = useState<any>(null);  // <-- set default state for local
   const [job, setJob] = useState<Job | null>(null);
+
+  useEffect(() => {
+    async function fetchLocalization() {
+      const fetchedLocal = await getLocalization(params.lang);
+      setLocal(fetchedLocal);
+    }
+    fetchLocalization();
+  }, [params.lang]);
 
   useEffect(() => {
     async function fetchJob() {
@@ -21,7 +31,16 @@ export default function Page({ params }: { params: { id: string, lang: string } 
     fetchJob();
   }, [params.id]);
 
-  if (!job) return <div>Loading...</div>;
+  if (!job || !local) return <div>Loading...</div>; 
+
+  let salaryDisplay;
+  if (job.IsNegotiable) {
+      salaryDisplay = "Negotiable";
+  } else if (job.MinSalary && job.MaxSalary && job.MinSalary !== job.MaxSalary) {
+      salaryDisplay = `${job.MinSalary}-${job.MaxSalary} ${job.Currency}`;
+  } else if (job.MinSalary) {
+      salaryDisplay = `${job.MinSalary} ${job.Currency}`;
+  }
 
   return (
     <div className='flex'>
@@ -37,7 +56,7 @@ export default function Page({ params }: { params: { id: string, lang: string } 
           <div className='flex flex-col text-center'>
             <div className='flex mb-2'>
               <span className='material-icons'>location_on</span>
-              <p className='text-gray-700'>Location</p>
+              <p className='text-gray-700'>{local.job.location}</p>
             </div>
 
             <p className='font-bold'>{job.Location}</p>
@@ -46,7 +65,7 @@ export default function Page({ params }: { params: { id: string, lang: string } 
           <div className='flex flex-col text-center'>
             <div className='flex mb-2'>
               <span className='material-icons'>show_chart</span>
-              <p className='text-gray-700'>Level</p>
+              <p className='text-gray-700'>{local.job.level}</p>
             </div>
 
             <p className='font-bold'>{job.Seniority}</p>
@@ -55,7 +74,7 @@ export default function Page({ params }: { params: { id: string, lang: string } 
           <div className='flex flex-col text-center'>
             <div className='flex mb-2'>
               <span className='material-icons'>work</span>
-              <p className='text-gray-700'>Department</p>
+              <p className='text-gray-700'>{local.job.department}</p>
             </div>
 
             <p className='font-bold'>{job.Department}</p>
@@ -64,7 +83,7 @@ export default function Page({ params }: { params: { id: string, lang: string } 
           <div className='flex flex-col text-center'>
             <div className='flex mb-2'>
               <span className='material-icons'>schedule</span>
-              <p className='text-gray-700'>Type</p>
+              <p className='text-gray-700'>{local.job.employmentType}</p>
             </div>
 
             <p className='font-bold'>{job.EmploymentType}</p>
@@ -73,10 +92,10 @@ export default function Page({ params }: { params: { id: string, lang: string } 
           <div className='flex flex-col text-center'>
             <div className='flex mb-2'>
               <span className='material-icons'>payments</span>
-              <p className='text-gray-700'>Salary</p>
+              <p className='text-gray-700'>{local.job.salary}</p>
             </div>
 
-            <p className='font-bold'>{job.Salary} BGN</p>
+            <p className='font-bold'>{salaryDisplay}</p>
           </div>
         </div>
 

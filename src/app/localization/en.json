@@ -1,0 +1,9 @@
+{
+    "job": {
+        "location": "Location",
+        "level": "Level",
+        "department": "Department",
+        "employmentType": "Employment Type",
+        "salary": "Salary"
+    }
+  }

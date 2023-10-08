@@ -19,7 +19,10 @@ export async function GET(request: Request) {
         ${lang !== 'en' ? 'DT.[TranslatedName]' : 'D.[Name]'} AS Department,
         ${lang !== 'en' ? 'ET.[TranslatedName]' : 'E.[Name]'} AS EmploymentType,
         ${lang !== 'en' ? 'LT.[TranslatedName]' : 'L.[Name]'} AS Location,
-        J.[Salary],
+        J.[MinSalary],
+        J.[MaxSalary],
+        CUR.[CurrencyCode] AS Currency,
+        J.[IsNegotiable],
         J.[Description],
         S.[Name] AS Seniority,
         C.[CompanyId] AS CompanyId,
@@ -33,6 +36,8 @@ export async function GET(request: Request) {
         C.[ShortDescription] AS CompanyShortDescription
     FROM 
         [dbo].[Jobs] J
+    LEFT JOIN
+        [dbo].[Currencies] CUR ON J.[CurrencyId] = CUR.[CurrencyId] -- LEFT JOIN to the Currencies table
     JOIN 
         [dbo].[Companies] C ON J.[CompanyId] = C.[CompanyId]
     JOIN 
@@ -43,10 +48,10 @@ export async function GET(request: Request) {
         [dbo].[Locations] L ON J.[LocationId] = L.[LocationId]
     JOIN 
         [dbo].[Seniority] S ON J.[SeniorityId] = S.[SeniorityId]
-  `;
+`;
 
-  if (lang !== 'en') {
-    query += `
+if (lang !== 'en') {
+  query += `
       JOIN [dbo].[DepartmentTranslations] DT ON J.[DepartmentId] = DT.[DepartmentId]
       JOIN [dbo].[Languages] DTL ON DT.[LanguageId] = DTL.[LanguageId] AND DTL.[LanguageCode] = @lang
 
@@ -56,7 +61,7 @@ export async function GET(request: Request) {
       JOIN [dbo].[LocationTranslations] LT ON J.[LocationId] = LT.[LocationId]
       JOIN [dbo].[Languages] LTL ON LT.[LanguageId] = LTL.[LanguageId] AND LTL.[LanguageCode] = @lang
     `;
-  }
+}
 
   query += `WHERE J.[JobId] = @JobId`;
 

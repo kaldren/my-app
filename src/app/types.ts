@@ -15,7 +15,10 @@ export interface Job {
     Department: string;
     EmploymentType: string;
     Location: string;
-    Salary: string;
+    MinSalary: number;
+    MaxSalary: number;
+    Currency?: string;
+    IsNegotiable: boolean;
     Description: string;
     Seniority: string;
     CompanyId: number;
