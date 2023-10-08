@@ -71,7 +71,7 @@ if (lang !== 'en') {
     const result = await pool
     .request()
     .input('JobId', sql.Int, jobId)
-    .input('Lang', sql.NVarChar, lang)
+    .input('lang', sql.NVarChar(2), lang)
     .query(query);
 
     if (result.recordset.length === 0) {

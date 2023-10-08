@@ -42,7 +42,6 @@ export default function Page() {
     }
 }
 
-
   return (
     <main>
       <H2 text='Публикувай работна позиция' />
