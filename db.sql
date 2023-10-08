@@ -50,10 +50,12 @@ CREATE TABLE Countries (
     Name NVARCHAR(100) NOT NULL
 );
 
+GO
+
 CREATE TABLE Locations (
     LocationId INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL,
-    CountryId INT FOREIGN KEY REFERENCES Countries(CountryId)
+    CountryId INT NOT NULL FOREIGN KEY REFERENCES Countries(CountryId)
 );
 GO
 
@@ -80,16 +82,16 @@ GO
 
 CREATE TABLE Jobs (
     JobId INT PRIMARY KEY IDENTITY(1,1),
-    CompanyId INT FOREIGN KEY REFERENCES Companies(CompanyId),
+    CompanyId INT NOT NULL FOREIGN KEY REFERENCES Companies(CompanyId),
     Position NVARCHAR(100) NOT NULL,
-    DepartmentId INT FOREIGN KEY REFERENCES Departments(DepartmentId),
-    EmploymentTypeId INT FOREIGN KEY REFERENCES EmploymentTypes(EmploymentTypeId),
-    LocationId INT FOREIGN KEY REFERENCES Locations(LocationId),
-    Salary NVARCHAR(20),
-    Description NVARCHAR(1000),
-    SeniorityId INT FOREIGN KEY REFERENCES Seniority(SeniorityID)
+    DepartmentId INT  NOT NULL FOREIGN KEY REFERENCES Departments(DepartmentId),
+    EmploymentTypeId INT  NOT NULL FOREIGN KEY REFERENCES EmploymentTypes(EmploymentTypeId),
+    LocationId INT  NOT NULL FOREIGN KEY REFERENCES Locations(LocationId),
+    Salary NVARCHAR(20) NOT NULL,
+    Description NVARCHAR(1000) NOT NULL,
+    SeniorityId INT  NOT NULL FOREIGN KEY REFERENCES Seniority(SeniorityID)
 );
-
+GO
 
 CREATE TABLE Languages (
     LanguageId INT PRIMARY KEY IDENTITY(1,1),
@@ -120,7 +122,7 @@ GO
 CREATE TABLE LocationTranslations (
     LocationTranslationId INT PRIMARY KEY IDENTITY(1,1),
     LocationId INT NOT NULL FOREIGN KEY REFERENCES Locations(LocationId),
-    LanguageCode NVARCHAR(10) NOT NULL FOREIGN KEY REFERENCES Languages(LanguageCode),
+    LanguageId INT NOT NULL FOREIGN KEY REFERENCES Languages(LanguageId),
     TranslatedName NVARCHAR(100) NOT NULL
 );
 GO
@@ -140,6 +142,12 @@ CREATE TABLE EmploymentTypeTranslations (
     TranslatedName NVARCHAR(100) NOT NULL
 );
 
+GO
+
+INSERT INTO dbo.[Languages] (LanguageCode, LanguageName)
+VALUES
+('en', 'English'),
+('bg', 'Bulgarian')
 GO
 
 INSERT INTO Seniority (Name)
@@ -430,11 +438,36 @@ INSERT INTO EmploymentTypes (Name) VALUES
 
 GO
 
-INSERT INTO Locations (Name, CountryId) VALUES
-('Sofia', 26),
-('Plovdiv', 26),
+
+INSERT INTO [dbo].[Locations] (Name, CountryId)
+VALUES 
+('Blagoevgrad', 26),
+('Burgas', 26),
 ('Varna', 26),
-('Bourgas', 26)
+('Veliko Tarnovo', 26),
+('Vidin', 26),
+('Vratsa', 26),
+('Gabrovo', 26),
+('Dobrich', 26),
+('Kardzhali', 26),
+('Kyustendil', 26),
+('Lovech', 26),
+('Montana', 26),
+('Pazardzhik', 26),
+('Pernik', 26),
+('Pleven', 26),
+('Plovdiv', 26),
+('Razgrad', 26),
+('Ruse', 26),
+('Silistra', 26),
+('Sliven', 26),
+('Smolyan', 26),
+('Sofia', 26),
+('Stara Zagora', 26),
+('Targovishte', 26),
+('Haskovo', 26),
+('Shumen', 26),
+('Yambol', 26);
 
 GO
 
@@ -479,16 +512,7 @@ SET IDENTITY_INSERT Companies OFF;
 
 GO
 
-
-INSERT 
-    INTO dbo.[Languages] (LanguageCode, LanguageName)
-VALUES 
-    ('EN', 'English'),
-    ('BG', 'Bulgarian')
-
-GO
-
-DECLARE @BGLangId AS NVARCHAR(2)
+DECLARE @BGLangId AS INT
 SELECT @BGLangId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
 
 INSERT INTO [dbo].[DepartmentTranslations] (DepartmentId, LanguageId, TranslatedName)
@@ -527,7 +551,7 @@ VALUES
 GO
 
 -- First, declare a variable to hold the LanguageId for Bulgarian
-DECLARE @BGLanguageId NVARCHAR(2)
+DECLARE @BGLanguageId AS INT
 SELECT @BGLanguageId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
 
 -- Insert translated employment types into the EmploymentTypeTranslations table
@@ -547,7 +571,7 @@ VALUES
 GO
 
 -- First, declare a variable to hold the LanguageId for Bulgarian
-DECLARE @BGLanguageId NVARCHAR(2)
+DECLARE @BGLanguageId AS INT
 SELECT @BGLanguageId = LanguageId FROM dbo.[Languages] WHERE LanguageCode = 'BG'
 
 -- Insert translated seniority levels into the SeniorityTranslations table
@@ -574,35 +598,35 @@ VALUES
 
 GO
 
-INSERT INTO [my-app].[dbo].[Locations] (Name, CountryId)
+INSERT INTO [my-app].[dbo].[LocationTranslations] ([LocationId], [LanguageId], [TranslatedName])
 VALUES 
-('Blagoevgrad', 26),
-('Burgas', 26),
-('Varna', 26),
-('Veliko Tarnovo', 26),
-('Vidin', 26),
-('Vratsa', 26),
-('Gabrovo', 26),
-('Dobrich', 26),
-('Kardzhali', 26),
-('Kyustendil', 26),
-('Lovech', 26),
-('Montana', 26),
-('Pazardzhik', 26),
-('Pernik', 26),
-('Pleven', 26),
-('Plovdiv', 26),
-('Razgrad', 26),
-('Ruse', 26),
-('Silistra', 26),
-('Sliven', 26),
-('Smolyan', 26),
-('Sofia', 26),
-('Stara Zagora', 26),
-('Targovishte', 26),
-('Haskovo', 26),
-('Shumen', 26),
-('Yambol', 26);
+(1, 2, N'Благоевград'),
+(2, 2, N'Бургас'),
+(3, 2, N'Варна'),
+(4, 2, N'Велико Търново'),
+(5, 2, N'Видин'),
+(6, 2, N'Враца'),
+(7, 2, N'Габрово'),
+(8, 2, N'Добрич'),
+(9, 2, N'Кърджали'),
+(10, 2, N'Кюстендил'),
+(11, 2, N'Ловеч'),
+(12, 2, N'Монтана'),
+(13, 2, N'Пазарджик'),
+(14, 2, N'Перник'),
+(15, 2, N'Плевен'),
+(16, 2, N'Пловдив'),
+(17, 2, N'Разград'),
+(18, 2, N'Русе'),
+(19, 2, N'Силистра'),
+(20, 2, N'Сливен'),
+(21, 2, N'Смолян'),
+(22, 2, N'София'),
+(23, 2, N'Стара Загора'),
+(24, 2, N'Търговище'),
+(25, 2, N'Хасково'),
+(26, 2, N'Шумен'),
+(27, 2, N'Ямбол');
 
 GO
 
