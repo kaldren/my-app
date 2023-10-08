@@ -18,7 +18,7 @@ export async function GET(request: Request) {
         J.[Position],
         ${lang !== 'en' ? 'DT.[TranslatedName]' : 'D.[Name]'} AS Department,
         ${lang !== 'en' ? 'ET.[TranslatedName]' : 'E.[Name]'} AS EmploymentType,
-        L.[Name] AS Location,
+        ${lang !== 'en' ? 'LT.[TranslatedName]' : 'L.[Name]'} AS Location,
         J.[Salary],
         J.[Description],
         S.[Name] AS Seniority,
@@ -52,6 +52,9 @@ export async function GET(request: Request) {
 
       JOIN [dbo].[EmploymentTypeTranslations] ET ON J.[EmploymentTypeId] = ET.[EmploymentTypeId]
       JOIN [dbo].[Languages] ETL ON DT.[LanguageId] = ETL.[LanguageId] AND ETL.[LanguageCode] = @lang
+
+      JOIN [dbo].[LocationTranslations] LT ON J.[LocationId] = LT.[LocationId]
+      JOIN [dbo].[Languages] LTL ON LT.[LanguageId] = LTL.[LanguageId] AND LTL.[LanguageCode] = @lang
     `;
   }
 
