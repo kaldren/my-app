@@ -32,3 +32,12 @@ export interface Job {
     CompanyShortDescription: string;
   }
   
+  export interface Department {
+    DepartmentId: number;
+    DepartmentName: string;
+  }
+
+  export interface EmploymentType {
+    EmploymentTypeId: number;
+    EmploymentTypeName: string;
+  }

@@ -1,16 +1,50 @@
 'use client'
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
-import { useState } from 'react';
+import { Department, EmploymentType } from '@/app/types';
+import { useEffect, useState } from 'react';
 
 export default function Page() {
 
   const [position, setPosition] = useState('');
   const [department, setDepartment] = useState('');
-  const [employment, setEmployment] = useState('');
+  const [employmentType, setEmploymentType] = useState('');
   const [location, setLocation] = useState('');
   const [salary, setSalary] = useState('');
   const [description, setDescription] = useState('');
+
+  const [departments, setDepartments] = useState<Department[] | null>(null);
+  const [employmentTypes, setEmploymentTypes] = useState<EmploymentType[] | null>(null);
+
+  useEffect(() => {
+    async function fetchDepartments() {
+      try {
+        const response = await fetch(`/api/departments`);
+        if (response.ok) {
+          const data: Department[] = await response.json();
+          setDepartments(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch department details.');
+      }
+    }
+
+    async function fetchEmploymentTypes() {
+      try {
+        const response = await fetch(`/api/employmentTypes`);
+        if (response.ok) {
+          const data: EmploymentType[] = await response.json();
+          setEmploymentTypes(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch employmentType details.');
+      }
+    }
+    fetchDepartments();
+    fetchEmploymentTypes();
+  }, []);
+
+  if (!departments || !employmentTypes) return <div>Loading...</div>;
 
   async function handleSubmit() {
     try {
@@ -22,7 +56,7 @@ export default function Page() {
             body: JSON.stringify({
                 position: position,
                 department: department,
-                employment: employment,
+                employment: employmentType,
                 location: location,
                 salary: salary,
                 description: description
@@ -57,18 +91,16 @@ export default function Page() {
           Отдел <span>*</span>
         </p>
         <select
-          name='department'
-          id='department'
-          className='border-2 block w-full h-10 px-2'
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-        >
-          <option value=''></option>
-          <option value='tech'>Технологии</option>
-          <option value='marketing'>Маркетинг</option>
-          <option value='transport'>Транспорт</option>
-          <option value='sales'>Продажби</option>
-        </select>
+                name='department'
+                id='department'
+                className='border-2 block w-full h-10 px-2'
+                onChange={(e) => setDepartment(e.target.value)}
+            >
+                <option value=''></option>
+                {departments.map(dept => (
+                    <option key={dept.DepartmentId} value={dept.DepartmentId}>{dept.DepartmentName}</option>
+                ))}
+            </select>
       </div>
 
       <div className='mb-5'>
@@ -76,22 +108,16 @@ export default function Page() {
           Вид заетост <span>*</span>
         </p>
         <select
-          name='employment'
-          id='employment'
-          className='border-2 block w-full h-10 px-2'
-          value={employment}
-          onChange={(e) => setEmployment(e.target.value)}
-        >
-          <option value=''></option>
-          <option value='fulltime'>Пълно работно време</option>
-          <option value='parttime'>Частична заетост</option>
-          <option value='remote'>От разстояние</option>
-          <option value='freelance'>Freelance</option>
-          <option value='temporary'>Временна работа</option>
-          <option value='internship'>Стажант</option>
-          <option value='commission'>Комисионна</option>
-          <option value='consultant'>Консултант</option>
-        </select>
+                name='employmentType'
+                id='employmentType'
+                className='border-2 block w-full h-10 px-2'
+                onChange={(e) => setEmploymentType(e.target.value)}
+            >
+                <option value=''></option>
+                {employmentTypes.map(emp => (
+                    <option key={emp.EmploymentTypeId} value={emp.EmploymentTypeId}>{emp.EmploymentTypeName}</option>
+                ))}
+            </select>
       </div>
 
       <div className='mb-5'>
