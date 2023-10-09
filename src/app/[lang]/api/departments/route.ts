@@ -24,8 +24,6 @@ export async function GET(request: Request) {
         `);
 
 
-    console.log(result);
-
       // Return the fetched data
         return new Response(JSON.stringify(result.recordset), {
             status: 200,

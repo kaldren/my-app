@@ -65,8 +65,6 @@ if (lang !== 'en') {
 
   query += `WHERE J.[JobId] = @JobId`;
 
-  console.log(query);
-
     const pool = await poolPromise;
     const result = await pool
     .request()

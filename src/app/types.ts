@@ -41,3 +41,9 @@ export interface Job {
     EmploymentTypeId: number;
     EmploymentTypeName: string;
   }
+
+  export interface Currency {
+    CurrencyId: number;
+    CurrencyCode: string;
+    CurrencyName: string;
+  }

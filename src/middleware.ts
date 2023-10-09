@@ -15,7 +15,6 @@ function getLocale(request: NextRequestWithAuth) {
 
   // Find the first requested locale that we support
   for (let lang of requestedLocales) {
-      console.log(lang);
     if (locales.includes(lang)) return lang;
   }
 

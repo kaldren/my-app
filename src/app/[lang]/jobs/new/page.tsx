@@ -1,7 +1,7 @@
 'use client'
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
-import { Department, EmploymentType } from '@/app/types';
+import { Currency, Department, EmploymentType } from '@/app/types';
 import { useEffect, useState } from 'react';
 
 export default function Page() {
@@ -15,6 +15,11 @@ export default function Page() {
 
   const [departments, setDepartments] = useState<Department[] | null>(null);
   const [employmentTypes, setEmploymentTypes] = useState<EmploymentType[] | null>(null);
+  const [salaryType, setSalaryType] = useState('fixed');
+  const [minSalary, setMinSalary] = useState('');
+  const [maxSalary, setMaxSalary] = useState('');
+  const [currency, setCurrency] = useState('BGN');
+  const [currencies, setCurrencies] = useState<Currency[] | null>(null);
 
   useEffect(() => {
     async function fetchDepartments() {
@@ -40,11 +45,25 @@ export default function Page() {
         console.error('Failed to fetch employmentType details.');
       }
     }
+
+    async function fetchCurrencies() {
+      try {
+        const response = await fetch(`/api/currencies`);
+        if (response.ok) {
+          const data: Currency[] = await response.json();
+          setCurrencies(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch employmentType details.');
+      }
+    }
+
     fetchDepartments();
     fetchEmploymentTypes();
+    fetchCurrencies();
   }, []);
 
-  if (!departments || !employmentTypes) return <div>Loading...</div>;
+  if (!departments || !employmentTypes || !currencies) return <div>Loading...</div>;
 
   async function handleSubmit() {
     try {
@@ -69,8 +88,6 @@ export default function Page() {
 
         const data = await response.json();
         // Handle the response as you see fit
-        console.log(data);
-
     } catch (error) {
         console.error("There was an error:", error);
     }
@@ -83,7 +100,12 @@ export default function Page() {
         <p>
           Позиция <span>*</span>
         </p>
-        <input type='text' value={position} onChange={(e) => setPosition(e.target.value)} className='rounded-2xl border-2 h-10 px-2 w-full' />
+        <input
+          type='text'
+          value={position}
+          onChange={(e) => setPosition(e.target.value)}
+          className='rounded-2xl border-2 h-10 px-2 w-full'
+        />
       </div>
 
       <div className='mb-5'>
@@ -91,16 +113,18 @@ export default function Page() {
           Отдел <span>*</span>
         </p>
         <select
-                name='department'
-                id='department'
-                className='border-2 block w-full h-10 px-2'
-                onChange={(e) => setDepartment(e.target.value)}
-            >
-                <option value=''></option>
-                {departments.map(dept => (
-                    <option key={dept.DepartmentId} value={dept.DepartmentId}>{dept.DepartmentName}</option>
-                ))}
-            </select>
+          name='department'
+          id='department'
+          className='border-2 block w-full h-10 px-2'
+          onChange={(e) => setDepartment(e.target.value)}
+        >
+          <option value=''></option>
+          {departments.map((dept) => (
+            <option key={dept.DepartmentId} value={dept.DepartmentId}>
+              {dept.DepartmentName}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className='mb-5'>
@@ -108,16 +132,18 @@ export default function Page() {
           Вид заетост <span>*</span>
         </p>
         <select
-                name='employmentType'
-                id='employmentType'
-                className='border-2 block w-full h-10 px-2'
-                onChange={(e) => setEmploymentType(e.target.value)}
-            >
-                <option value=''></option>
-                {employmentTypes.map(emp => (
-                    <option key={emp.EmploymentTypeId} value={emp.EmploymentTypeId}>{emp.EmploymentTypeName}</option>
-                ))}
-            </select>
+          name='employmentType'
+          id='employmentType'
+          className='border-2 block w-full h-10 px-2'
+          onChange={(e) => setEmploymentType(e.target.value)}
+        >
+          <option value=''></option>
+          {employmentTypes.map((emp) => (
+            <option key={emp.EmploymentTypeId} value={emp.EmploymentTypeId}>
+              {emp.EmploymentTypeName}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className='mb-5'>
@@ -140,25 +166,100 @@ export default function Page() {
       </div>
       <div className='mb-5'>
         <p>
-          Заплата, лв (нето) <span>*</span>
+          Тип на заплатата <span>*</span>
         </p>
-        <input type='text' value={salary} onChange={(e) => setSalary(e.target.value)} className='rounded-2xl border-2 h-10 px-2 w-full' />
-        <span>Може да използвате и диапазон, например 1500-2000лв.</span>
+        <div className='flex my-4'>
+          <label className='flex justify-between mr-2'>
+            <input
+              type='radio'
+              value='fixed'
+              checked={salaryType === 'fixed'}
+              onChange={() => setSalaryType('fixed')}
+            />
+            <span className='ml-2'>Фиксирана</span>
+          </label>
+          <label className='mr-2'>
+            <input
+              type='radio'
+              value='range'
+              checked={salaryType === 'range'}
+              onChange={() => setSalaryType('range')}
+            />
+            <span className='ml-2'>Диапазон</span>
+          </label>
+          <label className='mr-2'>
+            <input
+              type='radio'
+              value='negotiable'
+              checked={salaryType === 'negotiable'}
+              onChange={() => setSalaryType('negotiable')}
+            />
+            <span className='ml-2'>По договаряне</span>
+          </label>
+        </div>
+        {salaryType === 'fixed' && (
+          <div>
+            <p>Фиксирана заплата</p>
+            <input
+              type='number'
+              value={salary}
+              onChange={(e) => setSalary(e.target.value)}
+              className='rounded-2xl border-2 h-10 px-2 w-full'
+            />
+          </div>
+        )}
+        {salaryType === 'range' && (
+          <div>
+            <p>Минимална заплата</p>
+            <input
+              type='number'
+              value={minSalary}
+              onChange={(e) => setMinSalary(e.target.value)}
+              className='rounded-2xl border-2 h-10 px-2 w-full'
+            />
+            <p>Максимална заплата</p>
+            <input
+              type='number'
+              value={maxSalary}
+              onChange={(e) => setMaxSalary(e.target.value)}
+              className='rounded-2xl border-2 h-10 px-2 w-full'
+            />
+          </div>
+        )}
+        {salaryType === 'negotiable' && <div>Заплатата е по договаряне.</div>}
+
+        {(salaryType === 'range' ||
+          salaryType === 'fixed') && (
+            <select
+              name='currencies'
+              id='currencies'
+              className='border-2 block w-full h-10 px-2 my-2'
+              onChange={(e) => setCurrency(e.target.value)}
+            >
+              {currencies.map((c) => (
+                <option key={c.CurrencyId} value={c.CurrencyId}>
+                  {c.CurrencyCode}
+                </option>
+              ))}
+            </select>
+          )}
       </div>
+
       <div className='mb-5'>
         <p>
           Описание <span>*</span>
         </p>
-        <textarea 
-          value={description} onChange={(e) => setDescription(e.target.value)} 
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           className='rounded-2xl border-2 h-20 px-2 w-full overflow-y-auto'
-      ></textarea>
+        ></textarea>
 
         <span>Опишете позицията възможно най-точно</span>
       </div>
 
       <div>
-      <Button text="Публикувай" onClick={handleSubmit} />
+        <Button text='Публикувай' onClick={handleSubmit} />
       </div>
     </main>
   );
