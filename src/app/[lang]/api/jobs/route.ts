@@ -7,15 +7,19 @@ export async function POST(request: Request) {
     const pool = await poolPromise;
     const result = await pool
       .request()
-      .input('CompanyId', sql.Int, 1)
-      .input('DepartmentId', sql.Int, 1)
-      .input('Position', sql.NVarChar, "software developer")
-      .input('EmploymentTypeId', sql.Int, 1)
-      .input('LocationId', sql.Int, 1)
-      .input('Salary', sql.NVarChar, "6000-9000")
-      .input('Description', sql.NVarChar, "Write some .NET code!")
+      .input('CompanyId', sql.Int, req.CompanyId)
+      .input('DepartmentId', sql.Int, req.DepartmentId)
+      .input('Position', sql.NVarChar, req.Position)
+      .input('EmploymentTypeId', sql.Int, req.EmploymentTypeId)
+      .input('LocationId', sql.Int, req.LocationId)
+      .input('MinSalary', sql.Decimal, req.MinSalary)
+      .input('MaxSalary', sql.Decimal, req.MaxSalary)
+      .input('IsNegotiable', sql.Bit, req.IsNegotiable)
+      .input('CurrencyId', sql.Int, req.CurrencyId)
+      .input('Description', sql.NVarChar, req.Description)
+      .input('SeniorityId', sql.Int, req.SeniorityId)
       .query(
-        'INSERT INTO Jobs (CompanyId, DepartmentId, Position, EmploymentTypeId, LocationId, Salary, Description) VALUES (@CompanyId, @DepartmentId, @Position, @EmploymentTypeId, @LocationId, @Salary, @Description)'
+        'INSERT INTO Jobs (CompanyId, DepartmentId, Position, EmploymentTypeId, LocationId, MinSalary, MaxSalary, IsNegotiable, CurrencyId, Description, SeniorityId) VALUES (@CompanyId, @DepartmentId, @Position, @EmploymentTypeId, @LocationId, @MinSalary, @MaxSalary, @IsNegotiable, @CurrencyId, @Description, @SeniorityId)'
       );
       return Response.json({ result })
   } catch (err: any) {
