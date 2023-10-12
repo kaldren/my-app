@@ -4,7 +4,7 @@ import H2 from '@/app/components/H2';
 import { Currency, Department, EmploymentType } from '@/app/types';
 import { useEffect, useState } from 'react';
 
-export default function Page() {
+export default function Page({ params }: { params: { lang: string } }) {
 
   const [position, setPosition] = useState('');
   const [department, setDepartment] = useState('');
@@ -67,18 +67,23 @@ export default function Page() {
 
   async function handleSubmit() {
     try {
-        const response = await fetch('/api/jobs', {
+        const response = await fetch(`/${params.lang}/api/jobs`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                position: position,
-                department: department,
-                employment: employmentType,
-                location: location,
-                salary: salary,
-                description: description
+                CompanyId: 1,
+                DepartmentId: 1,
+                Position: "C# dev",
+                EmploymentTypeId: 1,
+                LocationId: 1,
+                MinSalary: 4000,
+                MaxSalary: 6000,
+                IsNegotiable: false,
+                CurrencyId: 2,
+                Description: "Microsoft Azure expert",
+                SeniorityId: 1
             }),
         });
 
