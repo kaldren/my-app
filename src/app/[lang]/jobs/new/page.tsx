@@ -6,9 +6,11 @@ import { useEffect, useState } from 'react';
 
 export default function Page({ params }: { params: { lang: string } }) {
 
+  const [submitBtnClicked, setSubmitBtnClicked] = useState(false);
+
   const [position, setPosition] = useState('');
-  const [department, setDepartment] = useState('');
-  const [employmentType, setEmploymentType] = useState('');
+  const [department, setDepartment] = useState<Department | null>(null);
+  const [employmentType, setEmploymentType] = useState<EmploymentType | null>(null);
   const [location, setLocation] = useState('');
   const [salary, setSalary] = useState('');
   const [description, setDescription] = useState('');
@@ -28,6 +30,7 @@ export default function Page({ params }: { params: { lang: string } }) {
         if (response.ok) {
           const data: Department[] = await response.json();
           setDepartments(data);
+          setDepartment(data[0]);
         }
       } catch (error) {
         console.error('Failed to fetch department details.');
@@ -40,6 +43,7 @@ export default function Page({ params }: { params: { lang: string } }) {
         if (response.ok) {
           const data: EmploymentType[] = await response.json();
           setEmploymentTypes(data);
+          setEmploymentType(data[0]);
         }
       } catch (error) {
         console.error('Failed to fetch employmentType details.');
@@ -66,6 +70,12 @@ export default function Page({ params }: { params: { lang: string } }) {
   if (!departments || !employmentTypes || !currencies) return <div>Loading...</div>;
 
   async function handleSubmit() {
+    setSubmitBtnClicked(true);
+    // form validation
+    if (department === null || employmentType === null) {
+      return;
+    }
+
     try {
         const response = await fetch(`/${params.lang}/api/jobs`, {
             method: 'POST',
@@ -74,9 +84,9 @@ export default function Page({ params }: { params: { lang: string } }) {
             },
             body: JSON.stringify({
                 CompanyId: 1,
-                DepartmentId: 1,
-                Position: "C# dev",
-                EmploymentTypeId: 1,
+                DepartmentId: department.DepartmentId,
+                Position: position,
+                EmploymentTypeId: employmentType.EmploymentTypeId,
                 LocationId: 1,
                 MinSalary: 4000,
                 MaxSalary: 6000,
@@ -113,17 +123,19 @@ export default function Page({ params }: { params: { lang: string } }) {
         />
       </div>
 
-      <div className='mb-5'>
+      <div className={`mb-5`}>
         <p>
           Отдел <span>*</span>
         </p>
         <select
           name='department'
           id='department'
-          className='border-2 block w-full h-10 px-2'
-          onChange={(e) => setDepartment(e.target.value)}
+          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && department === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          onChange={(e) => {
+            let dept: Department = {DepartmentId: e.target.value, DepartmentName: ''} // we don't really care about the name here as we're saving the ID
+            setDepartment(dept);
+          }}
         >
-          <option value=''></option>
           {departments.map((dept) => (
             <option key={dept.DepartmentId} value={dept.DepartmentId}>
               {dept.DepartmentName}
@@ -139,10 +151,12 @@ export default function Page({ params }: { params: { lang: string } }) {
         <select
           name='employmentType'
           id='employmentType'
-          className='border-2 block w-full h-10 px-2'
-          onChange={(e) => setEmploymentType(e.target.value)}
+          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && department === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          onChange={(e) => {
+            let empt: EmploymentType = {EmploymentTypeId: e.target.value, EmploymentTypeName: ''} // we don't really care about the name here as we're saving the ID
+            setEmploymentType(empt);
+          }}
         >
-          <option value=''></option>
           {employmentTypes.map((emp) => (
             <option key={emp.EmploymentTypeId} value={emp.EmploymentTypeId}>
               {emp.EmploymentTypeName}

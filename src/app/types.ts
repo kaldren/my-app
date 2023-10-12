@@ -33,12 +33,12 @@ export interface Job {
   }
   
   export interface Department {
-    DepartmentId: number;
+    DepartmentId: string;
     DepartmentName: string;
   }
 
   export interface EmploymentType {
-    EmploymentTypeId: number;
+    EmploymentTypeId: string;
     EmploymentTypeName: string;
   }
 
