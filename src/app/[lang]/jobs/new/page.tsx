@@ -1,7 +1,7 @@
 'use client'
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
-import { Currency, Department, EmploymentType } from '@/app/types';
+import { Currency, Department, EmploymentType, Location } from '@/app/types';
 import { useEffect, useState } from 'react';
 
 export default function Page({ params }: { params: { lang: string } }) {
@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [position, setPosition] = useState('');
   const [department, setDepartment] = useState<Department | null>(null);
   const [employmentType, setEmploymentType] = useState<EmploymentType | null>(null);
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState<Location | null>(null);
   const [salary, setSalary] = useState('');
   const [description, setDescription] = useState('');
 
@@ -22,6 +22,7 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [maxSalary, setMaxSalary] = useState('');
   const [currency, setCurrency] = useState('BGN');
   const [currencies, setCurrencies] = useState<Currency[] | null>(null);
+  const [locations, setLocations] = useState<Location[] | null>(null);
 
   useEffect(() => {
     async function fetchDepartments() {
@@ -33,7 +34,7 @@ export default function Page({ params }: { params: { lang: string } }) {
           setDepartment(data[0]);
         }
       } catch (error) {
-        console.error('Failed to fetch department details.');
+        console.error('Failed to fetch Department details.');
       }
     }
 
@@ -46,7 +47,7 @@ export default function Page({ params }: { params: { lang: string } }) {
           setEmploymentType(data[0]);
         }
       } catch (error) {
-        console.error('Failed to fetch employmentType details.');
+        console.error('Failed to fetch EmploymentType details.');
       }
     }
 
@@ -58,21 +59,34 @@ export default function Page({ params }: { params: { lang: string } }) {
           setCurrencies(data);
         }
       } catch (error) {
-        console.error('Failed to fetch employmentType details.');
+        console.error('Failed to fetch Currency details.');
+      }
+    }
+
+    async function fetchLocations() {
+      try {
+        const response = await fetch(`/api/locations`);
+        if (response.ok) {
+          const data: Location[] = await response.json();
+          setLocations(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch Location details.');
       }
     }
 
     fetchDepartments();
     fetchEmploymentTypes();
     fetchCurrencies();
+    fetchLocations();
   }, []);
 
-  if (!departments || !employmentTypes || !currencies) return <div>Loading...</div>;
+  if (!departments || !employmentTypes || !currencies || !locations) return <div>Loading...</div>;
 
   async function handleSubmit() {
     setSubmitBtnClicked(true);
     // form validation
-    if (department === null || employmentType === null) {
+    if (!department || !employmentType || !currency || !location) {
       return;
     }
 
@@ -172,15 +186,18 @@ export default function Page({ params }: { params: { lang: string } }) {
         <select
           name='location'
           id='location'
-          className='border-2 block w-full h-10 px-2'
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
+          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && location === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          onChange={(e) => {
+            let loc: Location = {LocationId: e.target.value, LocationName: ''} // we don't really care about the name here as we're saving the ID
+            setLocation(loc);
+          }}
         >
-          <option value=''></option>
-          <option value='sofia'>София</option>
-          <option value='plovdiv'>Пловдив</option>
-          <option value='varna'>Варна</option>
-          <option value='bourgas'>Бургас</option>
+          <option key="" value="" disabled={location !== null} className={`${location !== null ? 'hidden' : ''}`}></option>
+          {locations.map((loc) => (
+            <option key={loc.LocationId} value={loc.LocationId}>
+              {loc.LocationName}
+            </option>
+          ))}
         </select>
       </div>
       <div className='mb-5'>

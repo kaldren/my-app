@@ -47,3 +47,8 @@ export interface Job {
     CurrencyCode: string;
     CurrencyName: string;
   }
+
+  export interface Location {
+    LocationId: string;
+    LocationName: string;
+  }
