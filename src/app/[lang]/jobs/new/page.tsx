@@ -2,10 +2,14 @@
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
 import { Currency, Department, EmploymentType, Location, Salary } from '@/app/types';
+import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+
 
 export default function Page({ params }: { params: { lang: string } }) {
-
+  const { push } = useRouter();
   const minDescriptionLength = 50;
   const minPositionLength = 1;
 
@@ -116,6 +120,9 @@ export default function Page({ params }: { params: { lang: string } }) {
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
+        } else {
+          toast.success('New job has been posted');
+          push('/jobs/1036');
         }
 
         const data = await response.json();
