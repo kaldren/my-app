@@ -1,7 +1,7 @@
 'use client'
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
-import { Currency, Department, EmploymentType, Location } from '@/app/types';
+import { Currency, Department, EmploymentType, Location, Salary } from '@/app/types';
 import { useEffect, useState } from 'react';
 
 export default function Page({ params }: { params: { lang: string } }) {
@@ -12,14 +12,16 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [department, setDepartment] = useState<Department | null>(null);
   const [employmentType, setEmploymentType] = useState<EmploymentType | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
-  const [salary, setSalary] = useState('');
+  const [salary, setSalary] = useState<Salary>({
+    MinSalary: 0,
+    MaxSalary: 0,
+    IsNegotiable: true
+  });
   const [description, setDescription] = useState('');
 
   const [departments, setDepartments] = useState<Department[] | null>(null);
   const [employmentTypes, setEmploymentTypes] = useState<EmploymentType[] | null>(null);
   const [salaryType, setSalaryType] = useState('fixed');
-  const [minSalary, setMinSalary] = useState('');
-  const [maxSalary, setMaxSalary] = useState('');
   const [currency, setCurrency] = useState('BGN');
   const [currencies, setCurrencies] = useState<Currency[] | null>(null);
   const [locations, setLocations] = useState<Location[] | null>(null);
@@ -31,7 +33,6 @@ export default function Page({ params }: { params: { lang: string } }) {
         if (response.ok) {
           const data: Department[] = await response.json();
           setDepartments(data);
-          setDepartment(data[0]);
         }
       } catch (error) {
         console.error('Failed to fetch Department details.');
@@ -44,7 +45,6 @@ export default function Page({ params }: { params: { lang: string } }) {
         if (response.ok) {
           const data: EmploymentType[] = await response.json();
           setEmploymentTypes(data);
-          setEmploymentType(data[0]);
         }
       } catch (error) {
         console.error('Failed to fetch EmploymentType details.');
@@ -86,7 +86,7 @@ export default function Page({ params }: { params: { lang: string } }) {
   async function handleSubmit() {
     setSubmitBtnClicked(true);
     // form validation
-    if (!department || !employmentType || !currency || !location) {
+    if (!department || !employmentType || !currency || !location || !salary) {
       return;
     }
 
@@ -102,9 +102,9 @@ export default function Page({ params }: { params: { lang: string } }) {
                 Position: position,
                 EmploymentTypeId: employmentType.EmploymentTypeId,
                 LocationId: 1,
-                MinSalary: 4000,
-                MaxSalary: 6000,
-                IsNegotiable: false,
+                MinSalary: salary.MinSalary,
+                MaxSalary: salary.MaxSalary,
+                IsNegotiable: salary.IsNegotiable,
                 CurrencyId: 2,
                 Description: "Microsoft Azure expert",
                 SeniorityId: 1
@@ -127,7 +127,7 @@ export default function Page({ params }: { params: { lang: string } }) {
       <H2 text='Публикувай работна позиция' />
       <div className='mb-5'>
         <p>
-          Позиция <span>*</span>
+          Позиция <span className='text-red-600'>*</span>
         </p>
         <input
           type='text'
@@ -139,7 +139,7 @@ export default function Page({ params }: { params: { lang: string } }) {
 
       <div className={`mb-5`}>
         <p>
-          Отдел <span>*</span>
+          Отдел <span className='text-red-600'>*</span>
         </p>
         <select
           name='department'
@@ -150,6 +150,7 @@ export default function Page({ params }: { params: { lang: string } }) {
             setDepartment(dept);
           }}
         >
+          <option key="" value="" disabled={department !== null} className={`${department !== null ? 'hidden' : ''}`}></option>
           {departments.map((dept) => (
             <option key={dept.DepartmentId} value={dept.DepartmentId}>
               {dept.DepartmentName}
@@ -160,17 +161,18 @@ export default function Page({ params }: { params: { lang: string } }) {
 
       <div className='mb-5'>
         <p>
-          Вид заетост <span>*</span>
+          Вид заетост <span className='text-red-600'>*</span>
         </p>
         <select
           name='employmentType'
           id='employmentType'
-          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && department === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && employmentType === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
           onChange={(e) => {
             let empt: EmploymentType = {EmploymentTypeId: e.target.value, EmploymentTypeName: ''} // we don't really care about the name here as we're saving the ID
             setEmploymentType(empt);
           }}
         >
+          <option key="" value="" disabled={employmentType !== null} className={`${employmentType !== null ? 'hidden' : ''}`}></option>
           {employmentTypes.map((emp) => (
             <option key={emp.EmploymentTypeId} value={emp.EmploymentTypeId}>
               {emp.EmploymentTypeName}
@@ -181,7 +183,7 @@ export default function Page({ params }: { params: { lang: string } }) {
 
       <div className='mb-5'>
         <p>
-          Локация <span>*</span>
+          Локация <span className='text-red-600'>*</span>
         </p>
         <select
           name='location'
@@ -202,7 +204,7 @@ export default function Page({ params }: { params: { lang: string } }) {
       </div>
       <div className='mb-5'>
         <p>
-          Тип на заплатата <span>*</span>
+          Тип на заплатата <span className='text-red-600'>*</span>
         </p>
         <div className='flex my-4'>
           <label className='flex justify-between mr-2'>
@@ -238,8 +240,7 @@ export default function Page({ params }: { params: { lang: string } }) {
             <p>Фиксирана заплата</p>
             <input
               type='number'
-              value={salary}
-              onChange={(e) => setSalary(e.target.value)}
+              value={salary.MaxSalary}
               className='rounded-2xl border-2 h-10 px-2 w-full'
             />
           </div>
@@ -249,15 +250,13 @@ export default function Page({ params }: { params: { lang: string } }) {
             <p>Минимална заплата</p>
             <input
               type='number'
-              value={minSalary}
-              onChange={(e) => setMinSalary(e.target.value)}
+              value={salary.MinSalary}
               className='rounded-2xl border-2 h-10 px-2 w-full'
             />
             <p>Максимална заплата</p>
             <input
               type='number'
-              value={maxSalary}
-              onChange={(e) => setMaxSalary(e.target.value)}
+              value={salary.MaxSalary}
               className='rounded-2xl border-2 h-10 px-2 w-full'
             />
           </div>
@@ -283,15 +282,15 @@ export default function Page({ params }: { params: { lang: string } }) {
 
       <div className='mb-5'>
         <p>
-          Описание <span>*</span>
+          Описание на позицията <span className='text-red-600'>*</span>
         </p>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className='rounded-2xl border-2 h-20 px-2 w-full overflow-y-auto'
+          className={`rounded-2xl border-2 h-20 px-2 w-full overflow-y-auto ${submitBtnClicked && description.length < 50 ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
         ></textarea>
 
-        <span>Опишете позицията възможно най-точно</span>
+        <span>Оставащи задължителни символи: {description.length < 50 ? 50 - description.length : 0}</span>
       </div>
 
       <div>

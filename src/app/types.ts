@@ -52,3 +52,9 @@ export interface Job {
     LocationId: string;
     LocationName: string;
   }
+
+  export interface Salary {
+    MinSalary: number;
+    MaxSalary: number;
+    IsNegotiable: boolean;
+  }
