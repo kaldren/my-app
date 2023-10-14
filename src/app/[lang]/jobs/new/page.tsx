@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react';
 
 export default function Page({ params }: { params: { lang: string } }) {
 
+  const minDescriptionLength = 50;
+  const minPositionLength = 1;
+
   const [submitBtnClicked, setSubmitBtnClicked] = useState(false);
 
   const [position, setPosition] = useState('');
@@ -86,7 +89,7 @@ export default function Page({ params }: { params: { lang: string } }) {
   async function handleSubmit() {
     setSubmitBtnClicked(true);
     // form validation
-    if (!department || !employmentType || !currency || !location || !salary) {
+    if (!department || !employmentType || !currency || !location || !salary || !position) {
       return;
     }
 
@@ -133,7 +136,7 @@ export default function Page({ params }: { params: { lang: string } }) {
           type='text'
           value={position}
           onChange={(e) => setPosition(e.target.value)}
-          className='rounded-2xl border-2 h-10 px-2 w-full'
+          className={`rounded-2xl border-2 h-10 px-2 w-full ${submitBtnClicked && position.length < minPositionLength ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
         />
       </div>
 
@@ -242,6 +245,10 @@ export default function Page({ params }: { params: { lang: string } }) {
               type='number'
               value={salary.MaxSalary}
               className='rounded-2xl border-2 h-10 px-2 w-full'
+              onChange={(e) => {
+                let salary: Salary = {MinSalary: +e.target.value, MaxSalary: +e.target.value, IsNegotiable: false} // we don't really care about the name here as we're saving the ID
+                setSalary(salary);
+              }}
             />
           </div>
         )}
@@ -290,7 +297,7 @@ export default function Page({ params }: { params: { lang: string } }) {
           className={`rounded-2xl border-2 h-20 px-2 w-full overflow-y-auto ${submitBtnClicked && description.length < 50 ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
         ></textarea>
 
-        <span>Оставащи задължителни символи: {description.length < 50 ? 50 - description.length : 0}</span>
+        <span>Оставащи задължителни символи: {description.length < minDescriptionLength ? minDescriptionLength - description.length : 0}</span>
       </div>
 
       <div>
