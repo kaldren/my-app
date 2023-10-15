@@ -13,7 +13,8 @@ export async function GET(request: Request) {
         .input('lang', sql.NVarChar(2), lang) 
         .query(`
             SELECT 
-               [CountryId]
+               l.[LocationId]
+               ,l.[CountryId]
               ,COALESCE(lt.[TranslatedName], l.[Name]) AS [LocationName]
             FROM [dbo].[Locations] l
             LEFT JOIN [dbo].[LocationTranslations] lt ON l.[LocationId] = lt.[LocationId]

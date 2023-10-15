@@ -33,12 +33,12 @@ export interface Job {
   }
   
   export interface Department {
-    DepartmentId: string;
+    DepartmentId: number;
     DepartmentName: string;
   }
 
   export interface EmploymentType {
-    EmploymentTypeId: string;
+    EmploymentTypeId: number;
     EmploymentTypeName: string;
   }
 
@@ -49,7 +49,8 @@ export interface Job {
   }
 
   export interface Location {
-    LocationId: string;
+    LocationId: number;
+    CountryId: number;
     LocationName: string;
   }
 

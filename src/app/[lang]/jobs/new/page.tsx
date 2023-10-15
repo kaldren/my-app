@@ -2,7 +2,6 @@
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
 import { Currency, Department, EmploymentType, Location, Salary } from '@/app/types';
-import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -10,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Page({ params }: { params: { lang: string } }) {
   const { push } = useRouter();
-  const minDescriptionLength = 50;
+  const minDescriptionLength = 1;
   const minPositionLength = 1;
 
   const [submitBtnClicked, setSubmitBtnClicked] = useState(false);
@@ -108,12 +107,12 @@ export default function Page({ params }: { params: { lang: string } }) {
                 DepartmentId: department.DepartmentId,
                 Position: position,
                 EmploymentTypeId: employmentType.EmploymentTypeId,
-                LocationId: 1,
+                LocationId: location.LocationId,
                 MinSalary: salary.MinSalary,
                 MaxSalary: salary.MaxSalary,
                 IsNegotiable: salary.IsNegotiable,
                 CurrencyId: 2,
-                Description: position,
+                Description: description,
                 SeniorityId: 1
             }),
         });
@@ -123,7 +122,7 @@ export default function Page({ params }: { params: { lang: string } }) {
         }
 
         let jsonResponse = await response.json();
-        
+
         toast.success('New job has been posted.');
         push(`/jobs/${jsonResponse.jobId}`);
 
@@ -156,11 +155,14 @@ export default function Page({ params }: { params: { lang: string } }) {
           id='department'
           className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && department === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
           onChange={(e) => {
-            let dept: Department = {DepartmentId: e.target.value, DepartmentName: ''} // we don't really care about the name here as we're saving the ID
-            setDepartment(dept);
+            setDepartment(prevState => ({
+              ...prevState,
+              DepartmentId: +e.target.value,
+              DepartmentName: ''
+            }))
           }}
         >
-          <option key="" value="" disabled={department !== null} className={`${department !== null ? 'hidden' : ''}`}></option>
+          {department === null && <option key="disabled-option-department" value=""></option>}
           {departments.map((dept) => (
             <option key={dept.DepartmentId} value={dept.DepartmentId}>
               {dept.DepartmentName}
@@ -178,11 +180,14 @@ export default function Page({ params }: { params: { lang: string } }) {
           id='employmentType'
           className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && employmentType === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
           onChange={(e) => {
-            let empt: EmploymentType = {EmploymentTypeId: e.target.value, EmploymentTypeName: ''} // we don't really care about the name here as we're saving the ID
-            setEmploymentType(empt);
+            setEmploymentType(prevState => ({
+              ...prevState,
+              EmploymentTypeId: +e.target.value,
+              EmploymentTypeName: ''
+            }))
           }}
         >
-          <option key="" value="" disabled={employmentType !== null} className={`${employmentType !== null ? 'hidden' : ''}`}></option>
+          {employmentType === null && <option key="disabled-option-employmentType" value=""></option>}
           {employmentTypes.map((emp) => (
             <option key={emp.EmploymentTypeId} value={emp.EmploymentTypeId}>
               {emp.EmploymentTypeName}
@@ -200,13 +205,18 @@ export default function Page({ params }: { params: { lang: string } }) {
           id='location'
           className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && location === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
           onChange={(e) => {
-            let loc: Location = {LocationId: e.target.value, LocationName: ''} // we don't really care about the name here as we're saving the ID
-            setLocation(loc);
+            const [locationId, countryId] = e.target.value.split(',').map(Number);
+            setLocation(prevState => ({
+              ...prevState,
+              LocationId: locationId,
+              CountryId: countryId,
+              LocationName: '', // assuming you don't want to set this here
+            }));
           }}
         >
-          <option key="" value="" disabled={location !== null} className={`${location !== null ? 'hidden' : ''}`}></option>
+          {location === null && <option key="disabled-option-location" value=""></option>}
           {locations.map((loc) => (
-            <option key={loc.LocationId} value={loc.LocationId}>
+            <option key={loc.LocationId} value={`${loc.LocationId},${loc.CountryId}`}>
               {loc.LocationName}
             </option>
           ))}
@@ -253,8 +263,12 @@ export default function Page({ params }: { params: { lang: string } }) {
               value={salary.MaxSalary}
               className='rounded-2xl border-2 h-10 px-2 w-full'
               onChange={(e) => {
-                let salary: Salary = {MinSalary: +e.target.value, MaxSalary: +e.target.value, IsNegotiable: false} // we don't really care about the name here as we're saving the ID
-                setSalary(salary);
+                setSalary(prevState => ({
+                  ...prevState,
+                  MinSalary: +e.target.value,
+                  MaxSalary: +e.target.value,
+                  IsNegotiable: false
+                }));
               }}
             />
           </div>
@@ -269,7 +283,8 @@ export default function Page({ params }: { params: { lang: string } }) {
               onChange={(e) => {
                 setSalary(prevState => ({
                   ...prevState,
-                  MinSalary: +e.target.value
+                  MinSalary: +e.target.value,
+                  IsNegotiable: false
                 }));
               }}
             />
@@ -281,7 +296,8 @@ export default function Page({ params }: { params: { lang: string } }) {
               onChange={(e) => {
                 setSalary(prevState => ({
                   ...prevState,
-                  MaxSalary: +e.target.value
+                  MaxSalary: +e.target.value,
+                  IsNegotiable: false
                 }))
               }}
             />
