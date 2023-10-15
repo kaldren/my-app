@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
+import GooglePlacesAutocomplete from '../../../components/GooglePlacesAutocomplete';
 
 export default function Page({ params }: { params: { lang: string } }) {
   const { push } = useRouter();
@@ -33,6 +34,10 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [currencies, setCurrencies] = useState<Currency[] | null>(null);
   const [countries, setCountries] = useState<Country[] | null>(null);
   const [locations, setLocations] = useState<Location[] | null>(null);
+
+  const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
+    console.log(place); // Изведете информацията за избраната локация
+  };
 
   async function fetchLocations() {
     try {
@@ -150,6 +155,10 @@ export default function Page({ params }: { params: { lang: string } }) {
 
   return (
     <main>
+    <div>
+      <h1>Изберете локация</h1>
+      <GooglePlacesAutocomplete onPlaceSelected={handlePlaceSelected} />
+    </div>
       <H2 text='Публикувай работна позиция' />
       <div className='mb-5'>
         <p>
