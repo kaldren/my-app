@@ -25,7 +25,9 @@ export default function RootLayout({
         <body className={`${inter.className}`}>
           <Header />
           <main className='max-w-7xl m-auto'>{children}</main>
-          <ToastContainer />
+          <ToastContainer 
+            autoClose={1500}
+          />
         </body>
       </NextAuthProvider>
     </html>
