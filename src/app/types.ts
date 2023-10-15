@@ -48,6 +48,12 @@ export interface Job {
     CurrencyName: string;
   }
 
+  export interface Country {
+    CountryId: number;
+    CountryName: string;
+  }
+
+
   export interface Location {
     LocationId: number;
     CountryId: number;

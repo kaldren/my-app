@@ -1,7 +1,7 @@
 'use client'
 import Button from '@/app/components/Button';
 import H2 from '@/app/components/H2';
-import { Currency, Department, EmploymentType, Location, Salary } from '@/app/types';
+import { Country, Currency, Department, EmploymentType, Location, Salary } from '@/app/types';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -17,6 +17,7 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [position, setPosition] = useState('');
   const [department, setDepartment] = useState<Department | null>(null);
   const [employmentType, setEmploymentType] = useState<EmploymentType | null>(null);
+  const [country, setCountry] = useState<Country | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [salary, setSalary] = useState<Salary>({
     MinSalary: 0,
@@ -30,7 +31,20 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [salaryType, setSalaryType] = useState('fixed');
   const [currency, setCurrency] = useState('BGN');
   const [currencies, setCurrencies] = useState<Currency[] | null>(null);
+  const [countries, setCountries] = useState<Country[] | null>(null);
   const [locations, setLocations] = useState<Location[] | null>(null);
+
+  async function fetchLocations() {
+    try {
+      const response = await fetch(`/api/locations`);
+      if (response.ok) {
+        const data: Location[] = await response.json();
+        setLocations(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch Location details.');
+    }
+  }
 
   useEffect(() => {
     async function fetchDepartments() {
@@ -69,30 +83,33 @@ export default function Page({ params }: { params: { lang: string } }) {
       }
     }
 
-    async function fetchLocations() {
+    async function fetchCountries() {
       try {
-        const response = await fetch(`/api/locations`);
+        const response = await fetch(`/api/countries`);
         if (response.ok) {
-          const data: Location[] = await response.json();
-          setLocations(data);
+          const data: Country[] = await response.json();
+          setCountries(data);
         }
       } catch (error) {
-        console.error('Failed to fetch Location details.');
+        console.error('Failed to fetch Country details.');
       }
     }
+
+
 
     fetchDepartments();
     fetchEmploymentTypes();
     fetchCurrencies();
-    fetchLocations();
+    fetchCountries();
+    // fetchLocations();
   }, []);
 
-  if (!departments || !employmentTypes || !currencies || !locations) return <div>Loading...</div>;
+  if (!departments || !employmentTypes || !currencies || !countries) return <div>Loading...</div>;
 
   async function handleSubmit() {
     setSubmitBtnClicked(true);
     // form validation
-    if (!department || !employmentType || !currency || !location || !salary || !position) {
+    if (!department || !employmentType || !currency || !country || !location || !salary || !position) {
       return;
     }
 
@@ -198,11 +215,41 @@ export default function Page({ params }: { params: { lang: string } }) {
 
       <div className='mb-5'>
         <p>
+          Държава <span className='text-red-600'>*</span>
+        </p>
+        <select
+          name='country'
+          id='country'
+          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && country === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          onChange={(e) => {
+            setCountry(prevState => ({
+              ...prevState,
+              CountryId: +e.target.value,
+              CountryName: ''
+            }));
+
+            if (locations === null || locations.find(l => l.CountryId !== country?.CountryId)) {
+              fetchLocations();
+            }
+          }}
+        >
+          {country === null && <option key="disabled-option-country" value=""></option>}
+          {countries.map((loc) => (
+            <option key={loc.CountryId} value={loc.CountryId}>
+              {loc.CountryName}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className='mb-5'>
+        <p>
           Локация <span className='text-red-600'>*</span>
         </p>
         <select
           name='location'
           id='location'
+          disabled={country === null && locations === null}
           className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && location === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
           onChange={(e) => {
             const [locationId, countryId] = e.target.value.split(',').map(Number);
@@ -215,13 +262,14 @@ export default function Page({ params }: { params: { lang: string } }) {
           }}
         >
           {location === null && <option key="disabled-option-location" value=""></option>}
-          {locations.map((loc) => (
+          {locations?.map((loc) => (
             <option key={loc.LocationId} value={`${loc.LocationId},${loc.CountryId}`}>
               {loc.LocationName}
             </option>
           ))}
         </select>
       </div>
+      
       <div className='mb-5'>
         <p>
           Тип на заплатата <span className='text-red-600'>*</span>
