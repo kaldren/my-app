@@ -113,20 +113,20 @@ export default function Page({ params }: { params: { lang: string } }) {
                 MaxSalary: salary.MaxSalary,
                 IsNegotiable: salary.IsNegotiable,
                 CurrencyId: 2,
-                Description: "Microsoft Azure expert",
+                Description: position,
                 SeniorityId: 1
             }),
         });
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
-        } else {
-          toast.success('New job has been posted');
-          push('/jobs/1036');
         }
 
-        const data = await response.json();
-        // Handle the response as you see fit
+        let jsonResponse = await response.json();
+        
+        toast.success('New job has been posted.');
+        push(`/jobs/${jsonResponse.jobId}`);
+
     } catch (error) {
         console.error("There was an error:", error);
     }
@@ -264,14 +264,26 @@ export default function Page({ params }: { params: { lang: string } }) {
             <p>Минимална заплата</p>
             <input
               type='number'
-              value={salary.MinSalary}
               className='rounded-2xl border-2 h-10 px-2 w-full'
+              value={salary.MinSalary}
+              onChange={(e) => {
+                setSalary(prevState => ({
+                  ...prevState,
+                  MinSalary: +e.target.value
+                }));
+              }}
             />
             <p>Максимална заплата</p>
             <input
               type='number'
-              value={salary.MaxSalary}
               className='rounded-2xl border-2 h-10 px-2 w-full'
+              value={salary.MaxSalary}
+              onChange={(e) => {
+                setSalary(prevState => ({
+                  ...prevState,
+                  MaxSalary: +e.target.value
+                }))
+              }}
             />
           </div>
         )}

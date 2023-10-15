@@ -19,9 +19,19 @@ export async function POST(request: Request) {
       .input('Description', sql.NVarChar, req.Description)
       .input('SeniorityId', sql.Int, req.SeniorityId)
       .query(
-        'INSERT INTO Jobs (CompanyId, DepartmentId, Position, EmploymentTypeId, LocationId, MinSalary, MaxSalary, IsNegotiable, CurrencyId, Description, SeniorityId) VALUES (@CompanyId, @DepartmentId, @Position, @EmploymentTypeId, @LocationId, @MinSalary, @MaxSalary, @IsNegotiable, @CurrencyId, @Description, @SeniorityId)'
+        `INSERT INTO Jobs (CompanyId, DepartmentId, Position, EmploymentTypeId, LocationId, MinSalary, MaxSalary, IsNegotiable, CurrencyId, Description, SeniorityId)
+         OUTPUT INSERTED.JobId
+         VALUES (@CompanyId, @DepartmentId, @Position, @EmploymentTypeId, @LocationId, @MinSalary, @MaxSalary, @IsNegotiable, @CurrencyId, @Description, @SeniorityId)`
       );
-      return Response.json({ result })
+    // Assuming Id is the column name of the primary key
+    const jobId = result.recordset[0].JobId;
+
+    return new Response(JSON.stringify({ jobId }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
   } catch (err: any) {
     return new Response(`${err}`, {
         status: 500
