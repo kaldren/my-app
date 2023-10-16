@@ -1,7 +1,7 @@
 // components/GooglePlacesAutocomplete.tsx
 import { useEffect } from 'react';
 
-const GooglePlacesAutocomplete = ({ onPlaceSelected }: { onPlaceSelected: (place: google.maps.places.PlaceResult) => void }) => {
+const GooglePlacesAutocomplete = ({ onPlaceSelected, className=`rounded-2xl border-2 h-10 px-2 w-full` }: { onPlaceSelected: (place: google.maps.places.PlaceResult) => void, className: string }) => {
   
   useEffect(() => {
     let autocomplete: google.maps.places.Autocomplete;
@@ -9,7 +9,12 @@ const GooglePlacesAutocomplete = ({ onPlaceSelected }: { onPlaceSelected: (place
     const loadPlaces = () => {
       const input = document.getElementById('location-input') as HTMLInputElement;
 
-      autocomplete = new google.maps.places.Autocomplete(input);
+      const autocompleteOptions: google.maps.places.AutocompleteOptions = {
+        types: ['(cities)'],
+        componentRestrictions: { country: 'bg' }
+      };
+
+      autocomplete = new google.maps.places.Autocomplete(input, autocompleteOptions);
       autocomplete.addListener('place_changed', () => {
         if (autocomplete) {
           const place = autocomplete.getPlace();
@@ -28,7 +33,7 @@ const GooglePlacesAutocomplete = ({ onPlaceSelected }: { onPlaceSelected: (place
     }
   }, []);
 
-  return <input id="location-input" placeholder="Въведете локация..." />;
+  return <input id="location-input" placeholder="Въведете локация..." className={`${className}}`}/>;
 };
 
 export default GooglePlacesAutocomplete;

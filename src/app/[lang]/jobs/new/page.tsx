@@ -8,6 +8,40 @@ import { useRouter } from 'next/navigation';
 
 import GooglePlacesAutocomplete from '../../../components/GooglePlacesAutocomplete';
 
+const extractDetails = (place) => {
+  let locationName = '';
+  let provinceName = '';
+  let countryName = '';
+
+  for (let i = 0; i < place.address_components.length; i++) {
+    const component = place.address_components[i];
+    
+    // Check for the locality (usually represents city or town)
+    if (component.types.includes('locality')) {
+      locationName = component.long_name;
+    }
+
+    // Check for administrative_area_level_1 (usually represents the province or state)
+    if (component.types.includes('administrative_area_level_1')) {
+      provinceName = component.long_name;
+      
+      // Remove common descriptors from provinceName
+      provinceName = provinceName.replace(/ Province| City/g, ''); // Add any other common descriptors as needed
+    }
+
+    // Check for country
+    if (component.types.includes('country')) {
+      countryName = component.long_name;
+    }
+  }
+
+  return {
+    location: locationName,
+    province: provinceName,
+    country: countryName
+  };
+}
+
 export default function Page({ params }: { params: { lang: string } }) {
   const { push } = useRouter();
   const minDescriptionLength = 1;
@@ -18,7 +52,6 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [position, setPosition] = useState('');
   const [department, setDepartment] = useState<Department | null>(null);
   const [employmentType, setEmploymentType] = useState<EmploymentType | null>(null);
-  const [country, setCountry] = useState<Country | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [salary, setSalary] = useState<Salary>({
     MinSalary: 0,
@@ -32,24 +65,22 @@ export default function Page({ params }: { params: { lang: string } }) {
   const [salaryType, setSalaryType] = useState('fixed');
   const [currency, setCurrency] = useState('BGN');
   const [currencies, setCurrencies] = useState<Currency[] | null>(null);
-  const [countries, setCountries] = useState<Country[] | null>(null);
-  const [locations, setLocations] = useState<Location[] | null>(null);
 
   const handlePlaceSelected = (place: google.maps.places.PlaceResult) => {
     console.log(place); // Изведете информацията за избраната локация
-  };
+    console.log(place.address_components); // Изведете информацията за избраната локация
+    if (place && place.address_components) {
+      const details = extractDetails(place);
+      console.log(details);
 
-  async function fetchLocations() {
-    try {
-      const response = await fetch(`/api/locations`);
-      if (response.ok) {
-        const data: Location[] = await response.json();
-        setLocations(data);
-      }
-    } catch (error) {
-      console.error('Failed to fetch Location details.');
+      // let location = place.address_components[0].long_name;
+      // let province = place.address_components[1].long_name.replace(/\sprovince/i, '');
+
+      // let loc: Location = {LocationName: location, ProvinceName: province, CountryName: let};
+
+      // setLocation(loc);
     }
-  }
+  };
 
   useEffect(() => {
     async function fetchDepartments() {
@@ -88,33 +119,17 @@ export default function Page({ params }: { params: { lang: string } }) {
       }
     }
 
-    async function fetchCountries() {
-      try {
-        const response = await fetch(`/api/countries`);
-        if (response.ok) {
-          const data: Country[] = await response.json();
-          setCountries(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch Country details.');
-      }
-    }
-
-
-
     fetchDepartments();
     fetchEmploymentTypes();
     fetchCurrencies();
-    fetchCountries();
-    // fetchLocations();
   }, []);
 
-  if (!departments || !employmentTypes || !currencies || !countries) return <div>Loading...</div>;
+  if (!departments || !employmentTypes || !currencies) return <div>Loading...</div>;
 
   async function handleSubmit() {
     setSubmitBtnClicked(true);
     // form validation
-    if (!department || !employmentType || !currency || !country || !location || !salary || !position) {
+    if (!department || !employmentType || !currency || !location || !salary || !position) {
       return;
     }
 
@@ -129,7 +144,9 @@ export default function Page({ params }: { params: { lang: string } }) {
                 DepartmentId: department.DepartmentId,
                 Position: position,
                 EmploymentTypeId: employmentType.EmploymentTypeId,
-                LocationId: location.LocationId,
+                Country: location.CountryName,
+                Province: location.ProvinceName,
+                Location: location.LocationName,
                 MinSalary: salary.MinSalary,
                 MaxSalary: salary.MaxSalary,
                 IsNegotiable: salary.IsNegotiable,
@@ -157,7 +174,6 @@ export default function Page({ params }: { params: { lang: string } }) {
     <main>
     <div>
       <h1>Изберете локация</h1>
-      <GooglePlacesAutocomplete onPlaceSelected={handlePlaceSelected} />
     </div>
       <H2 text='Публикувай работна позиция' />
       <div className='mb-5'>
@@ -168,7 +184,7 @@ export default function Page({ params }: { params: { lang: string } }) {
           type='text'
           value={position}
           onChange={(e) => setPosition(e.target.value)}
-          className={`rounded-2xl border-2 h-10 px-2 w-full ${submitBtnClicked && position.length < minPositionLength ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          className={`border-2 h-10 px-2 w-full ${submitBtnClicked && position.length < minPositionLength ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
         />
       </div>
 
@@ -224,59 +240,9 @@ export default function Page({ params }: { params: { lang: string } }) {
 
       <div className='mb-5'>
         <p>
-          Държава <span className='text-red-600'>*</span>
-        </p>
-        <select
-          name='country'
-          id='country'
-          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && country === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
-          onChange={(e) => {
-            setCountry(prevState => ({
-              ...prevState,
-              CountryId: +e.target.value,
-              CountryName: ''
-            }));
-
-            if (locations === null || locations.find(l => l.CountryId !== country?.CountryId)) {
-              fetchLocations();
-            }
-          }}
-        >
-          {country === null && <option key="disabled-option-country" value=""></option>}
-          {countries.map((loc) => (
-            <option key={loc.CountryId} value={loc.CountryId}>
-              {loc.CountryName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className='mb-5'>
-        <p>
           Локация <span className='text-red-600'>*</span>
         </p>
-        <select
-          name='location'
-          id='location'
-          disabled={country === null && locations === null}
-          className={`border-2 block w-full h-10 px-2 ${submitBtnClicked && location === null ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
-          onChange={(e) => {
-            const [locationId, countryId] = e.target.value.split(',').map(Number);
-            setLocation(prevState => ({
-              ...prevState,
-              LocationId: locationId,
-              CountryId: countryId,
-              LocationName: '', // assuming you don't want to set this here
-            }));
-          }}
-        >
-          {location === null && <option key="disabled-option-location" value=""></option>}
-          {locations?.map((loc) => (
-            <option key={loc.LocationId} value={`${loc.LocationId},${loc.CountryId}`}>
-              {loc.LocationName}
-            </option>
-          ))}
-        </select>
+        <GooglePlacesAutocomplete onPlaceSelected={handlePlaceSelected} className={`border-2 h-10 px-2 w-full ${submitBtnClicked && location === null ? 'border-red-600' : ''}`}/>
       </div>
       
       <div className='mb-5'>
@@ -318,7 +284,7 @@ export default function Page({ params }: { params: { lang: string } }) {
             <input
               type='number'
               value={salary.MaxSalary}
-              className='rounded-2xl border-2 h-10 px-2 w-full'
+              className='border-2 h-10 px-2 w-full'
               onChange={(e) => {
                 setSalary(prevState => ({
                   ...prevState,
@@ -335,7 +301,7 @@ export default function Page({ params }: { params: { lang: string } }) {
             <p>Минимална заплата</p>
             <input
               type='number'
-              className='rounded-2xl border-2 h-10 px-2 w-full'
+              className='border-2 h-10 px-2 w-full'
               value={salary.MinSalary}
               onChange={(e) => {
                 setSalary(prevState => ({
@@ -348,7 +314,7 @@ export default function Page({ params }: { params: { lang: string } }) {
             <p>Максимална заплата</p>
             <input
               type='number'
-              className='rounded-2xl border-2 h-10 px-2 w-full'
+              className='border-2 h-10 px-2 w-full'
               value={salary.MaxSalary}
               onChange={(e) => {
                 setSalary(prevState => ({
@@ -386,7 +352,7 @@ export default function Page({ params }: { params: { lang: string } }) {
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className={`rounded-2xl border-2 h-20 px-2 w-full overflow-y-auto ${submitBtnClicked && description.length < 50 ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          className={`border-2 h-20 px-2 w-full overflow-y-auto ${submitBtnClicked && description.length < 50 ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
         ></textarea>
 
         <span>Оставащи задължителни символи: {description.length < minDescriptionLength ? minDescriptionLength - description.length : 0}</span>

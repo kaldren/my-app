@@ -55,9 +55,9 @@ export interface Job {
 
 
   export interface Location {
-    LocationId: number;
-    CountryId: number;
     LocationName: string;
+    ProvinceName: string;
+    CountryName: string;
   }
 
   export interface Salary {

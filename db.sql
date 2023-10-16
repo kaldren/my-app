@@ -10,13 +10,16 @@ GO
 DROP TABLE IF EXISTS dbo.[DepartmentTranslations]
 GO
 
-DROP TABLE IF EXISTS dbo.[LocationTranslations]
+DROP TABLE IF EXISTS dbo.[ProvinceTranslations]
 GO
 
 DROP TABLE IF EXISTS dbo.[Departments]
 GO
 
 DROP TABLE IF EXISTS dbo.[EmploymentTypes]
+GO
+
+DROP TABLE IF EXISTS dbo.[Provinces]
 GO
 
 DROP TABLE IF EXISTS dbo.[Locations]
@@ -52,10 +55,18 @@ CREATE TABLE Countries (
 
 GO
 
+CREATE TABLE Provinces (
+    ProvinceId INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100) NOT NULL,
+    CountryId INT NOT NULL FOREIGN KEY REFERENCES Countries(CountryId)
+);
+GO
+
 CREATE TABLE Locations (
     LocationId INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL,
-    CountryId INT NOT NULL FOREIGN KEY REFERENCES Countries(CountryId)
+    CountryId INT NOT NULL FOREIGN KEY REFERENCES Countries(CountryId),
+    ProvinceId INT NOT NULL FOREIGN KEY REFERENCES Provinces(ProvinceId)
 );
 GO
 
@@ -94,7 +105,9 @@ CREATE TABLE Jobs (
     Position NVARCHAR(100) NOT NULL,
     DepartmentId INT  NOT NULL FOREIGN KEY REFERENCES Departments(DepartmentId),
     EmploymentTypeId INT  NOT NULL FOREIGN KEY REFERENCES EmploymentTypes(EmploymentTypeId),
+    ProvinceId INT  NOT NULL FOREIGN KEY REFERENCES Provinces(ProvinceId),
     LocationId INT  NOT NULL FOREIGN KEY REFERENCES Locations(LocationId),
+    CountryId INT  NOT NULL FOREIGN KEY REFERENCES Countries(CountryId),
     MinSalary DECIMAL(20, 2) NULL,
     MaxSalary DECIMAL(20, 2) NULL,
     CurrencyId INT NULL FOREIGN KEY REFERENCES Currencies(CurrencyId),
@@ -131,8 +144,16 @@ CREATE TABLE SeniorityTranslations (
 
 GO
 
+CREATE TABLE ProvinceTranslations (
+    ProvinceTranslationId INT PRIMARY KEY IDENTITY(1,1),
+    ProvinceId INT NOT NULL FOREIGN KEY REFERENCES Provinces(ProvinceId),
+    LanguageId INT NOT NULL FOREIGN KEY REFERENCES Languages(LanguageId),
+    TranslatedName NVARCHAR(100) NOT NULL
+);
+GO
+
 CREATE TABLE LocationTranslations (
-    LocationTranslationId INT PRIMARY KEY IDENTITY(1,1),
+    LocationTranslationsId INT PRIMARY KEY IDENTITY(1,1),
     LocationId INT NOT NULL FOREIGN KEY REFERENCES Locations(LocationId),
     LanguageId INT NOT NULL FOREIGN KEY REFERENCES Languages(LanguageId),
     TranslatedName NVARCHAR(100) NOT NULL
@@ -451,7 +472,7 @@ INSERT INTO EmploymentTypes (Name) VALUES
 GO
 
 
-INSERT INTO [dbo].[Locations] (Name, CountryId)
+INSERT INTO [dbo].[Provinces] (Name, CountryId)
 VALUES 
 ('Blagoevgrad', 26),
 ('Burgas', 26),
@@ -499,35 +520,35 @@ SET IDENTITY_INSERT Companies ON;
 
 -- First Job (Fixed Salary of 50000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
 (1, 'Software Developer', 1, 1, 1, 50000, 75000, 1, 0, 'Develop and maintain web applications.', 2);
 GO
 
 -- Second Job (Fixed Salary of 45000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
 (2, 'Marketing Specialist', 2, 2, 2, 45000, 45000, 2, 0, 'Handle the marketing campaigns and strategies.', 1);
 GO
 
 -- Third Job (Fixed Salary of 55000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
 (3, 'Sales Manager', 3, 3, 3, 55000, 55000, 3, 0, 'Oversee the sales team and drive sales targets.', 3);
 GO
 
 -- Fourth Job (Fixed Salary of 48000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
 (4, 'HR Specialist', 4, 4, 4, 48000, 48000, 1, 0, 'Handle recruitment, employee relations, and HR policies.', 1);
 GO
 
 -- Fifth Job (Fixed Salary of 45000)
 INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, LocationId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
 VALUES 
 (5, '.NET Developer', 2, 2, 2, 45000, 45000, 1, 1, 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
 
@@ -623,7 +644,7 @@ VALUES
 
 GO
 
-INSERT INTO [my-app].[dbo].[LocationTranslations] ([LocationId], [LanguageId], [TranslatedName])
+INSERT INTO [my-app].[dbo].[ProvinceTranslations] ([ProvinceId], [LanguageId], [TranslatedName])
 VALUES 
 (1, 2, N'Благоевград'),
 (2, 2, N'Бургас'),
