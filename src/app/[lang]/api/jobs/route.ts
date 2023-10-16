@@ -21,70 +21,40 @@ export async function POST(request: Request) {
       .input('Description', sql.NVarChar, req.Description)
       .input('SeniorityId', sql.Int, req.SeniorityId)
       .query(
-        `DECLARE @CompanyId AS INT = 1
-        DECLARE @DepartmentId AS INT = 1
-        DECLARE @Position AS NVARCHAR(50) = 'C# Developer'
-        DECLARE @EmploymentTypeId AS INT = 1
-        DECLARE @Location AS NVARCHAR(MAX) = 'Lyaskovets'
-        DECLARE @Province AS NVARCHAR(MAX) = 'Veliko Tarnovo'
-        DECLARE @Country AS NVARCHAR(MAX) = 'Bulgaria'
-        DECLARE @MinSalary AS DECIMAL = 4500
-        DECLARE @MaxSalary AS DECIMAL = 6500
-        DECLARE @IsNegotiable AS BIT = 0
-        DECLARE @CurrencyId AS INT = 1
-        DECLARE @Description AS NVARCHAR(MAX) = 'TOP JOB!!!!'
-        DECLARE @SeniorityId AS INT = 1
-        
+        `
         -- FROM DB
         DECLARE @NewLocationId AS INT;
         DECLARE @NewProvinceId AS INT;
+                
+        -- Check if we have that Location and Province in the database
+        DECLARE @LocationIdDb AS INT
+        DECLARE @ProvinceIdDb AS INT
         DECLARE @CountryIdDb AS INT;
         
-        -- Check if we have that Location and Province in the database
-        DECLARE @LocationIdDb AS NVARCHAR(MAX)
-        DECLARE @ProvinceIdDb AS NVARCHAR(MAX)
-        
-        SELECT 
-           @LocationIdDb = l.[LocationId]
-          ,@ProvinceIdDb = l.[ProvinceId]
-        FROM [dbo].[Locations] l
-        JOIN [dbo].[Provinces] p ON l.[ProvinceId] = p.[ProvinceId] AND p.[Name] = @Province
-        WHERE l.[Name] = @Location
-        
-        -- No province & location
-        IF (@LocationIdDb IS NULL AND @ProvinceIdDb IS NULL)
-        BEGIN
-          -- Create province & location
-          SELECT @CountryIdDb = [CountryId] FROM [dbo].[Countries] WHERE [Name] = @Country
-        
-          IF (@CountryIdDb IS NOT NULL)
-          BEGIN
-            INSERT INTO [dbo].[Provinces] (Name, CountryId) VALUES (@Province, @CountryIdDb)
-            SET @NewProvinceId = SCOPE_IDENTITY()
-        
-            INSERT INTO [dbo].[Locations] (Name, CountryId, ProvinceId) VALUES (@Location, @CountryIdDb, @NewProvinceId)
-          END
-        END
-        
+		    SELECT 
+             @LocationIdDb = l.[LocationId]
+            ,@ProvinceIdDb = p.[ProvinceId]
+            ,@CountryIdDb = p.[CountryId]
+        FROM [dbo].[Provinces] p
+        LEFT JOIN [dbo].[Locations] l ON p.[ProvinceId] = l.[ProvinceId] AND l.[Name] = @Location
+        WHERE p.[Name] = @Province
+                
         -- No location
         IF (@LocationIdDb IS NULL)
         BEGIN
-          -- Create location
-          -- Create province & location
-          SELECT @CountryIdDb = [CountryId] FROM [dbo].[Countries] WHERE [Name] = @Country
-        
-          IF (@CountryIdDb IS NOT NULL)
-          BEGIN
+            -- Create location
             INSERT INTO [dbo].[Locations] (Name, CountryId, ProvinceId) VALUES (@Location, @CountryIdDb, @NewProvinceId)
-            SET @NewLocationId = SCOPE_IDENTITY()
-        
-            INSERT INTO [dbo].[Locations] (Name, CountryId, ProvinceId) VALUES (@Location, @CountryIdDb, @NewProvinceId)
-          END
+			      SET @LocationIdDb = SCOPE_IDENTITY()
         END
-        
-        -- If we don't - create the location and get the id
-        
-        
+
+        -- No location & province
+        IF (@LocationIdDb IS NULL AND @ProvinceIdDb)
+        BEGIN
+            -- Create location & province ???
+        END
+
+        -- If we don't - create the location and get the id   
+                
         INSERT INTO Jobs (CompanyId, DepartmentId, Position, EmploymentTypeId, CountryId, ProvinceId, LocationId, MinSalary, MaxSalary, IsNegotiable, CurrencyId, Description, SeniorityId)
         OUTPUT INSERTED.JobId
         VALUES (@CompanyId, @DepartmentId, @Position, @EmploymentTypeId, @CountryIdDb, @ProvinceIdDb, @LocationIdDb, @MinSalary, @MaxSalary, @IsNegotiable, @CurrencyId, @Description, @SeniorityId)`

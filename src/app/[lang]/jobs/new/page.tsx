@@ -73,12 +73,9 @@ export default function Page({ params }: { params: { lang: string } }) {
       const details = extractDetails(place);
       console.log(details);
 
-      // let location = place.address_components[0].long_name;
-      // let province = place.address_components[1].long_name.replace(/\sprovince/i, '');
+      let loc: Location = {LocationName: details.location, ProvinceName: details.province, CountryName: details.country};
 
-      // let loc: Location = {LocationName: location, ProvinceName: province, CountryName: let};
-
-      // setLocation(loc);
+      setLocation(loc);
     }
   };
 
@@ -172,9 +169,6 @@ export default function Page({ params }: { params: { lang: string } }) {
 
   return (
     <main>
-    <div>
-      <h1>Изберете локация</h1>
-    </div>
       <H2 text='Публикувай работна позиция' />
       <div className='mb-5'>
         <p>
@@ -352,7 +346,7 @@ export default function Page({ params }: { params: { lang: string } }) {
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className={`border-2 h-20 px-2 w-full overflow-y-auto ${submitBtnClicked && description.length < 50 ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
+          className={`border-2 h-20 px-2 w-full overflow-y-auto ${submitBtnClicked && description.length < minDescriptionLength ? 'border-l-red-600 border-l-2 border-red-600' : ''}`}
         ></textarea>
 
         <span>Оставащи задължителни символи: {description.length < minDescriptionLength ? minDescriptionLength - description.length : 0}</span>

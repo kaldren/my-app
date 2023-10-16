@@ -66,7 +66,8 @@ CREATE TABLE Locations (
     LocationId INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL,
     CountryId INT NOT NULL FOREIGN KEY REFERENCES Countries(CountryId),
-    ProvinceId INT NOT NULL FOREIGN KEY REFERENCES Provinces(ProvinceId)
+    ProvinceId INT NOT NULL FOREIGN KEY REFERENCES Provinces(ProvinceId),
+    UNIQUE (Name, CountryId, ProvinceId)
 );
 GO
 
@@ -516,45 +517,45 @@ VALUES ('BGN', 'Bulgarian Lev');
 
 GO
 
-SET IDENTITY_INSERT Companies ON;
+--SET IDENTITY_INSERT Companies ON;
 
--- First Job (Fixed Salary of 50000)
-INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
-VALUES 
-(1, 'Software Developer', 1, 1, 1, 50000, 75000, 1, 0, 'Develop and maintain web applications.', 2);
-GO
+---- First Job (Fixed Salary of 50000)
+--INSERT INTO [dbo].[Jobs] 
+--(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+--VALUES 
+--(1, 'Software Developer', 1, 1, 1, 50000, 75000, 1, 0, 'Develop and maintain web applications.', 2);
+--GO
 
--- Second Job (Fixed Salary of 45000)
-INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
-VALUES 
-(2, 'Marketing Specialist', 2, 2, 2, 45000, 45000, 2, 0, 'Handle the marketing campaigns and strategies.', 1);
-GO
+---- Second Job (Fixed Salary of 45000)
+--INSERT INTO [dbo].[Jobs] 
+--(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+--VALUES 
+--(2, 'Marketing Specialist', 2, 2, 2, 45000, 45000, 2, 0, 'Handle the marketing campaigns and strategies.', 1);
+--GO
 
--- Third Job (Fixed Salary of 55000)
-INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
-VALUES 
-(3, 'Sales Manager', 3, 3, 3, 55000, 55000, 3, 0, 'Oversee the sales team and drive sales targets.', 3);
-GO
+---- Third Job (Fixed Salary of 55000)
+--INSERT INTO [dbo].[Jobs] 
+--(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+--VALUES 
+--(3, 'Sales Manager', 3, 3, 3, 55000, 55000, 3, 0, 'Oversee the sales team and drive sales targets.', 3);
+--GO
 
--- Fourth Job (Fixed Salary of 48000)
-INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
-VALUES 
-(4, 'HR Specialist', 4, 4, 4, 48000, 48000, 1, 0, 'Handle recruitment, employee relations, and HR policies.', 1);
-GO
+---- Fourth Job (Fixed Salary of 48000)
+--INSERT INTO [dbo].[Jobs] 
+--(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+--VALUES 
+--(4, 'HR Specialist', 4, 4, 4, 48000, 48000, 1, 0, 'Handle recruitment, employee relations, and HR policies.', 1);
+--GO
 
--- Fifth Job (Fixed Salary of 45000)
-INSERT INTO [dbo].[Jobs] 
-(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
-VALUES 
-(5, '.NET Developer', 2, 2, 2, 45000, 45000, 1, 1, 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
+---- Fifth Job (Fixed Salary of 45000)
+--INSERT INTO [dbo].[Jobs] 
+--(CompanyId, Position, DepartmentId, EmploymentTypeId, ProvinceId, MinSalary, MaxSalary, CurrencyId, IsNegotiable, Description, SeniorityId) 
+--VALUES 
+--(5, '.NET Developer', 2, 2, 2, 45000, 45000, 1, 1, 'As our Senior Backend Software Engineer, you''ll be instrumental in shaping the architecture, design, and implementation of our robust backend systems. Your technical expertise will be pivotal in turning complex requirements into scalable, resilient, and efficient .NET applications.', 1);
 
-GO
+--GO
 
-SET IDENTITY_INSERT Companies OFF;
+--SET IDENTITY_INSERT Companies OFF;
 
 GO
 
