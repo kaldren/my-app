@@ -73,7 +73,14 @@ export default function Page({ params }: { params: { lang: string } }) {
       const details = extractDetails(place);
       console.log(details);
 
-      let loc: Location = {LocationName: details.location, ProvinceName: details.province, CountryName: details.country};
+      let loc: Location = {
+        Location: details.location, 
+        LocationTranslated: details.location, 
+        Province: details.province,
+        ProvinceTranslated: details.province,
+        Country: details.country,
+        CountryTranslated: details.country
+      };
 
       setLocation(loc);
     }
@@ -126,7 +133,7 @@ export default function Page({ params }: { params: { lang: string } }) {
   async function handleSubmit() {
     setSubmitBtnClicked(true);
     // form validation
-    if (!department || !employmentType || !currency || !location || !salary || !position) {
+    if (!department || !employmentType || !currency || !location || !salary || !position || !description) {
       return;
     }
 
@@ -141,9 +148,9 @@ export default function Page({ params }: { params: { lang: string } }) {
                 DepartmentId: department.DepartmentId,
                 Position: position,
                 EmploymentTypeId: employmentType.EmploymentTypeId,
-                Country: location.CountryName,
-                Province: location.ProvinceName,
-                Location: location.LocationName,
+                Country: location.Country,
+                Province: location.Province,
+                Location: location.Location,
                 MinSalary: salary.MinSalary,
                 MaxSalary: salary.MaxSalary,
                 IsNegotiable: salary.IsNegotiable,

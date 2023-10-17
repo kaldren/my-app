@@ -22,10 +22,6 @@ export async function POST(request: Request) {
       .input('SeniorityId', sql.Int, req.SeniorityId)
       .query(
         `
-        -- FROM DB
-        DECLARE @NewLocationId AS INT;
-        DECLARE @NewProvinceId AS INT;
-                
         -- Check if we have that Location and Province in the database
         DECLARE @LocationIdDb AS INT
         DECLARE @ProvinceIdDb AS INT
@@ -43,18 +39,16 @@ export async function POST(request: Request) {
         IF (@LocationIdDb IS NULL)
         BEGIN
             -- Create location
-            INSERT INTO [dbo].[Locations] (Name, CountryId, ProvinceId) VALUES (@Location, @CountryIdDb, @NewProvinceId)
+            INSERT INTO [dbo].[Locations] (Name, CountryId, ProvinceId) VALUES (@Location, @CountryIdDb, @ProvinceIdDb)
 			      SET @LocationIdDb = SCOPE_IDENTITY()
         END
 
         -- No location & province
-        IF (@LocationIdDb IS NULL AND @ProvinceIdDb)
-        BEGIN
+        --IF (@LocationIdDb IS NULL AND @ProvinceIdDb IS NULL)
+        --BEGIN
             -- Create location & province ???
-        END
+        --END
 
-        -- If we don't - create the location and get the id   
-                
         INSERT INTO Jobs (CompanyId, DepartmentId, Position, EmploymentTypeId, CountryId, ProvinceId, LocationId, MinSalary, MaxSalary, IsNegotiable, CurrencyId, Description, SeniorityId)
         OUTPUT INSERTED.JobId
         VALUES (@CompanyId, @DepartmentId, @Position, @EmploymentTypeId, @CountryIdDb, @ProvinceIdDb, @LocationIdDb, @MinSalary, @MaxSalary, @IsNegotiable, @CurrencyId, @Description, @SeniorityId)`
